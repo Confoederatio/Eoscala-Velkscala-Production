@@ -1,6 +1,11 @@
 //Initialise functions
-//[WIP] - Refactor everything
 {
+  /**
+   * Fetches the total sum of all int values within an image.
+   * @param {String} [arg0_file_path] - The file path to the image to fetch the sum of.
+   * 
+   * @returns {number}
+   */
   global.getImageSum = function (arg0_file_path) {
     //Convert from parameters
     var file_path = arg0_file_path;
@@ -17,6 +22,13 @@
     return total_sum;
   };
 
+  /**
+   * getRGBAFromPixel() - Fetches the RGBA value of a pixel based on its index.
+   * @param {Object} arg0_image_object 
+   * @param {number} arg1_index 
+   * 
+   * @returns {[number, number, number, number]}
+   */
   global.getRGBAFromPixel = function (arg0_image_object, arg1_index) {
     //Convert from parameters
     var image_obj = (typeof arg0_image_object != "string") ? arg0_image_object : loadNumberRasterImage(arg0_image_object);
@@ -31,6 +43,27 @@
     ];
   };
 
+  /**
+   * loadImage() - Loads an image into the assigned variable.
+   * @param {String} arg0_file_path 
+   * 
+   * @returns {Object}
+   */
+  global.loadImage = function (arg0_file_path) {
+    //Convert from parameters
+    var file_path = arg0_file_path;
+
+    //Return statement
+    return pngjs.PNG.sync.read(fs.readFileSync(file_path));
+  };
+
+  /**
+   * loadNumberFromPixel() - Loads an int value from a pixel based on its index.
+   * @param {Object} arg0_image_object 
+   * @param {number} arg1_index 
+   * 
+   * @returns {number}
+   */
   global.loadNumberFromPixel = function (arg0_image_object, arg1_index) {
     //Convert from parameters
     var image_obj = (typeof arg0_image_object != "string") ? arg0_image_object : loadNumberRasterImage(arg0_image_object);
@@ -40,6 +73,18 @@
     return decodeRGBAAsNumber(getRGBAFromPixel(image_obj, index));
   };
 
+  /**
+   * loadNumberRasterImage() - Loads a number raster image into the assigned variable.
+   * @param {String} arg0_file_path 
+   * 
+   * @returns {Object}
+   */
+  /**
+   * loadNumberRasterImage() - Loads a number raster image into the assigned variable.
+   * @param {String} arg0_file_path 
+   * 
+   * @returns {width: number, height: number, data: number[]}
+   */
   global.loadNumberRasterImage = function (arg0_file_path) {
     //Convert from parameters
     var file_path = arg0_file_path;
@@ -126,6 +171,14 @@
     };
   };
 
+  /**
+   * saveNumberToPixel() - Saves an int value to a pixel based on the corresponding index.
+   * @param {String} arg0_image_object - The image object to use.
+   * @param {number} arg1_index - The index of the pixel to save the number to.
+   * @param {number} arg2_number - The number to save to the pixel.
+   * 
+   * @returns {[number, number, number, number]}
+   */
   global.saveNumberToPixel = function (arg0_image_object, arg1_index, arg2_number) {
     //Convert from parameters
     var image_obj = (typeof arg0_image_object != "string") ? arg0_image_object : loadNumberRasterImage(arg0_image_object);
