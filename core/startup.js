@@ -18,8 +18,7 @@
     main.countries = getWorldBankSubdivisions();
     main.maddison_estimates = FileManager.loadFileAsJSON(input_file_paths.maddison_estimates);
 
-    //Process all images
-    processAllImages();
+    //[WIP] - You should load in GDP (PPP), population, and GDP (PPP) per capita for each country
 
     //Return statement
     return main;
