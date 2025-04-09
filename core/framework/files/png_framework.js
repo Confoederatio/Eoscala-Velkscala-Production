@@ -20,7 +20,7 @@
   global.getRGBAFromPixel = function (arg0_image_object, arg1_index) {
     //Convert from parameters
     var image_obj = (typeof arg0_image_object != "string") ? arg0_image_object : loadNumberRasterImage(arg0_image_object);
-    var index = arg1_index;
+    var index = arg1_index*4;
 
     //Return RGBA
     return [
@@ -82,7 +82,7 @@
     for (var i = 0; i < image_obj.data.length; i++)
       if (options.function)
         options.function(i, image_obj.data[i]);
-  }
+  };
 
   /**
    * saveNumberRasterImage() - Saves a number raster image to a file.
@@ -129,7 +129,7 @@
   global.saveNumberToPixel = function (arg0_image_object, arg1_index, arg2_number) {
     //Convert from parameters
     var image_obj = (typeof arg0_image_object != "string") ? arg0_image_object : loadNumberRasterImage(arg0_image_object);
-    var index = arg1_index;
+    var index = arg1_index*4;
     var number = arg2_number;
 
     //Declare local instance variables

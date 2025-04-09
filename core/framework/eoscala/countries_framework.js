@@ -11,6 +11,10 @@
     //Return statement if found
     if (main.countries[rgb.join(",")])
       return main.countries[rgb.join(",")];
+    if (rgb.length > 3)
+      rgb = rgb.slice(0, 3); //Slice off alpha channel
+      if (main.countries[rgb.join(",")])
+        return main.countries[rgb.join(",")];
 
     //Return statement; NODATA_value
     return main.countries.NODATA_value;
@@ -20,7 +24,7 @@
     //Declare local instance variables
     var countries_obj = config.eoscala.history.countries;
     var maddison_obj = config.eoscala.maddison.countries;
-    var ppp_scalar_obj = config.eoscala.world_bank.ppp_scalars;
+    var ppp_scalar_obj = config.eoscala.statistics.ppp_scalars;
 
     //Iterate over all_countries_keys and input ppp_relative_scalar and ppp_absolute_scalar for each country
     var all_countries_keys = Object.keys(countries_obj);
@@ -51,7 +55,7 @@
           local_value.ppp_absolute_scalar = default_scalar_obj.ppp_absolute_scalar;
           local_value.ppp_relative_scalar = default_scalar_obj.ppp_relative_scalar;
 
-          console.warn(`getWorldBankSubdivisions(): ${all_countries_keys[i]} (${local_value.name}) does not have a valid equivalent in config.eoscala.world_bank.ppp_scalars.`);
+          console.warn(`getWorldBankSubdivisions(): ${all_countries_keys[i]} (${local_value.name}) does not have a valid equivalent in config.eoscala.statistics.ppp_scalars.`);
         }
       } else {
         console.error(`getWorldBankSubdivisions(): ${all_countries_keys[i]} has no name!`);

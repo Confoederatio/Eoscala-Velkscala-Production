@@ -3,7 +3,7 @@ global.config = {
   eoscala: {
     history: {},
     maddison: {},
-    world_bank: {}
+    statistics: {}
   },
   velkscala: {}
 };

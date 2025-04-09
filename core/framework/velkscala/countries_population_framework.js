@@ -12,7 +12,7 @@
 
     //Declare local instance variables
     var common_defines = config.defines.common;
-    var hyde_population_file_path = `${common_defines.input_file_paths.hyde_folder}popc_${getHYDEYearName(year)}_number.png`;
+    var hyde_population_file_path = `${common_defines.output_file_paths.hyde_folder}popc_${getHYDEYearName(year)}_number.png`;
     var world_bank_subdivisions_file_path = common_defines.input_file_paths.world_bank_subdivisions;
     var world_bank_subdivisions_image = loadWorldBankSubdivisions(world_bank_subdivisions_file_path);
     
@@ -28,9 +28,10 @@
 
         var local_country = getCountryObjectByRGB(getRGBAFromPixel(world_bank_subdivisions_image, local_index));
 
-        if (local_country)
+        if (local_country) {
           if (!local_country.population) local_country.population = {};
           modifyValue(local_country.population, year.toString(), local_data);
+        }
       }
     });
 
@@ -40,7 +41,9 @@
     for (var i = 0; i < all_countries_keys.length; i++) {
       var local_country = main.countries[all_countries_keys[i]];
 
-      return_obj[all_countries_keys[i]] = local_country.population[year.toString()];
+      try {
+        return_obj[all_countries_keys[i]] = local_country.population[year.toString()];
+      } catch (e) {}
     }
     
     //Return statement

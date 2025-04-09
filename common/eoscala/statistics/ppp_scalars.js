@@ -1,4 +1,4 @@
-config.eoscala.world_bank.ppp_scalars = {
+config.eoscala.statistics.ppp_scalars = {
   "Aruba": {
     "ppp_relative_scalar": 0.8640938092,
     "ppp_absolute_scalar": 0.6646875456
