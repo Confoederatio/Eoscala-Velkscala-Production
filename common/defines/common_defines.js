@@ -1,6 +1,7 @@
 config.defines.common = {
   input_file_paths: {
     //Eoscala
+    hyde_folder: `./input/velkscala/hyde/`,
     maddison_estimates: `./input/eoscala/maddison/maddison_gdp_ppp_2011$.json`,
     regional_subdivisions: `./input/eoscala/regional_subdivisions.png`,
     sedac_folder: `./input/eoscala/sedac/`,
@@ -22,6 +23,6 @@ config.defines.common = {
     potential_economic_activity_folder: `./output/eoscala/potential_economic_activity/`,
 
     //Velkscala
-    hyde_folder: `./output/HYDE_png/`
+    hyde_folder: `./output/velkscala/HYDE_png/`
   }
 };
