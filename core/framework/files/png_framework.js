@@ -67,6 +67,24 @@
   };
 
   /**
+   * operateNumberRasterImage() - Runs an operation on a raster image for a file.
+   * @param {Object} [arg0_options] 
+   *  @param {String} [arg0_options.file_path] - The file path to save the image to.
+   *  @param {Function} [arg0_options.function] - (arg0_index, arg1_number)
+   */
+  global.operateNumberRasterImage = function (arg0_options) {
+    //Convert from parameters
+    var options = (arg0_options) ? arg0_options : {};
+
+    //Declare local instance variables
+    var image_obj = loadNumberRasterImage(options.file_path);
+
+    for (var i = 0; i < image_obj.data.length; i++)
+      if (options.function)
+        options.function(i, image_obj.data[i]);
+  }
+
+  /**
    * saveNumberRasterImage() - Saves a number raster image to a file.
    * @param {Object} [arg0_options]
    *  @param {String} [arg0_options.file_path] - The file path to save the image to.
