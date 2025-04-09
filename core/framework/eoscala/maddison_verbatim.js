@@ -126,7 +126,7 @@
     } catch (e) {}
   };
 
-  global.getNordhausGlobalGDPPPP = function () {
+  global.getNordhausGlobalGDP_PPP = function () {
     //Declare local instance variables
     var hyde_years = config.velkscala.hyde.hyde_years;
     var nordhaus_obj = { //In Billions of 1990$
@@ -254,7 +254,7 @@
     return nordhaus_obj;
   };
 
-  global.getGDPPPP = function (arg0_country_obj) {
+  global.getCountryGDP_PPP = function (arg0_country_obj) {
     //Convert from parameters
     var country_obj = arg0_country_obj;
 
@@ -297,8 +297,6 @@
 
       //Iterate over all hyde_years and perform interpolation if within the given domain
       try {
-        var local_splines = new cubic_spline(years, values);
-
         for (var i = starting_year; i <= end_year; i++)
           local_values[i] = cubicSplineInterpolation(years, values, i);
       } catch (e) {
@@ -438,7 +436,7 @@
 
     //Declare local instance variables
     var gdp_ppp_file_path = `${config.defines.common.output_file_paths.OLS_nordhaus_gdp_ppp_prefix}${year}${config.defines.common.output_file_paths.OLS_nordhaus_gdp_ppp_suffix}`;
-    var nordhaus_gdp_obj = getNordhausGlobalGDPPPP();
+    var nordhaus_gdp_obj = getNordhausGlobalGDP_PPP();
     var world_bank_subdivisions_image = loadWorldBankSubdivisions(config.defines.common.input_file_paths.world_bank_subdivisions);
 
     var gdp_ppp_image = loadNumberRasterImage(gdp_ppp_file_path);

@@ -91,7 +91,7 @@ module.exports = {
     var file_path = arg0_file_path;
 
     //Return statement
-    return JSON.parse(fs.readFileSync(file_path, "utf8"));
+    return JSON.parse(JSON.stringify(fs.readFileSync(file_path, "utf8")));
   },
 
   save: function (arg0_file_path) {

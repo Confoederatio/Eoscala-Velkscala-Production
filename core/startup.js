@@ -19,9 +19,9 @@
     main.maddison_estimates = FileManager.loadFileAsJSON(input_file_paths.maddison_estimates);
 
     //Initialise all calculations
-    main.countries = getGDPPPPByCountry(main.countries);
+    main.countries = getGDP_PPPByCountry(main.countries);
     main.countries = getPopulationByCountry(main.countries);
-    main.countries = getGDPPPPPerCapitaByCountry(main.countries);
+    main.countries = getGDP_PPPPerCapitaByCountry(main.countries);
 
     //Process all images
     processAllImages();
