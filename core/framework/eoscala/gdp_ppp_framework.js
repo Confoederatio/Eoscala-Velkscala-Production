@@ -3,6 +3,12 @@
 {
   //Raster functions
   {
+    /**
+     * scaleRasterToNordhaus() - Scales a raster image of GDP (PPP) to Nordhaus Global GDP (PPP) 2000$. Returns the total global GDP for that year.
+     * @param {number} arg0_year - The year to scale the raster image to.
+     * 
+     * @returns {number}
+     */
     global.scaleRasterToNordhaus = function (arg0_year) {
       //Convert from parameters
       var year = parseInt(arg0_year);
@@ -47,23 +53,37 @@
       //Return statement
       return sum_gdp*100;
     };
-  
+    
+    /**
+     * scaleRastersToNordhaus() - Scales all raste images of GDP (PPP) to Nordhaus. Returns an object dictionary of years to total global GDP (PPP) in 2000$.
+     * 
+     * @returns {Object<number, number>}
+     */
     global.scaleRastersToNordhaus = function () {
       //Declare local instance variables
       var hyde_years = config.velkscala.hyde.hyde_years;
+      var return_obj = {};
   
       //Iterate over all hyde_years
       for (var i = 0; i < hyde_years.length; i++) try {
-        scaleRasterToNordhaus(hyde_years[i]);
+        modifyObject(return_obj, hyde_years[i], scaleRasterToNordhaus(hyde_years[i]));
       } catch (e) {
         console.error(`scaleRastersToNordhaus(): Error for Year ${hyde_years[i]}`);
         console.error(e);
       }
+
+      //Return statement
+      return return_obj;
     };
   }
 
   //Statistical functions
   {
+    /**
+     * getGlobalNordhausGDP_PPP() - Returns an object dictionary of total global GDP (PPP) in 2000$ for all HYDE years.
+     * 
+     * @returns {Object<number, number>}
+     */
     global.getGlobalNordhausGDP_PPP = function () {
       //Declare local instance variables
       var hyde_years = config.velkscala.hyde.hyde_years;
@@ -97,6 +117,10 @@
 {
   //Raster functions
   {
+    /**
+     * scaleRasterToMaddison() - Scales a raster image of GDP (PPP) to Maddison by country level. Returns the total global GDP for that year.
+     * @param {number} arg0_year - The year to scale the raster image to.
+     */
     global.scaleRasterToMaddison = function (arg0_year) {
       //Convert from parameters
       var year = parseInt(arg0_year);
@@ -191,7 +215,10 @@
       console.log(`- ${gdp_ppp_file_path} ..`);
       fs.writeFileSync(gdp_ppp_file_path, pngjs.PNG.sync.write(png));
     };
-  
+    
+    /**
+     * scaleRastersToMaddison() - Scales all rasters of GDP (PPP) to Maddison by country level.
+     */
     global.scaleRastersToMaddison = function () {
       //Declare local instance variables
       var hyde_years = config.velkscala.hyde.hyde_years;
@@ -211,6 +238,12 @@
 
   //Statistical functions
   {
+    /**
+     * getCountryGDP_PPP() - Returns an object dictionary of GDP (PPP) in 2000$ for a given country.
+     * @param {Object} arg0_country_obj - The country object to get the GDP (PPP) for.
+     * 
+     * @returns {Object<number, number>}
+     */
     global.getCountryGDP_PPP = function (arg0_country_obj) {
       //Convert from parameters
       var country_obj = arg0_country_obj;
