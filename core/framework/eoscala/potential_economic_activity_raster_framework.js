@@ -1,26 +1,27 @@
 //Initialise functions
 {
-  global.generateFirstStepModelRaster = function (arg0_year, arg1_output_file_path) {
+  global.eoscalaGeneratePotentialEconomicActivityRaster = function (arg0_year, arg1_output_file_path) {
     //Convert from parameters
     var year = parseInt(arg0_year);
-    var output_file_path = (arg1_output_file_path) ? arg1_output_file_path : `./output/OLS_base_model_png/OLS_base_model_${year}_number.png`;
+    var output_file_path = (arg1_output_file_path) ? arg1_output_file_path : `${config.defines.common.output_file_paths.OLS_potential_economic_activity_prefix}${year}${config.defines.common.output_file_paths.OLS_potential_economic_activity_suffix}`;
 
     //Declare local instance variables
-    var hyde_dictionary = getHYDEDictionary();
-    var processed_model = FileManager.loadFileAsJSON(`./output/OLS_base_model_data/processed_base_model.json`);
+    var hyde_dictionary = config.velkscala.hyde.hyde_dictionary;
+    var processed_model = FileManager.loadFileAsJSON(config.defines.common.output_file_paths.OLS_potential_economic_activity_weights);
 
     var all_hyde_keys = Object.keys(hyde_dictionary);
     var coefficients = processed_model.coefficients;
     var hyde_images = {};
     var valid_hyde_keys = [];
 
-    console.log(`Generating projected GDP (PPP, Intl. 2000$) raster based on HYDE-SEDAC Processed Model for ${year} ..`);
+    //Iterate over all_hyde_keys
+    console.log(`Generating projected GDP (PPP, Intl. 2000$) raster based on HYDE-SEDAC Processed Model for ${getHYDEYearName(year)} ..`);
     for (var i = 0; i < all_hyde_keys.length; i++) try {
-      hyde_images[all_hyde_keys[i]] = loadNumberRasterImage(`./output/HYDE_png/${all_hyde_keys[i]}${Math.abs(year)}${(year >= 0) ? "AD" : "BC"}_number.png`);
+      hyde_images[all_hyde_keys[i]] = loadNumberRasterImage(`${config.defines.common.output_file_paths.hyde_folder}${all_hyde_keys[i]}${getHYDEYearName(year)}_number.png`);
       valid_hyde_keys.push(all_hyde_keys[i]);
       console.log(`- Loaded ${all_hyde_keys[i]} into memory.`);
     } catch (e) {
-      console.warn()
+      console.warn(`- Failed to load ${all_hyde_keys[i]} into memory.`);
     }
 
     //Initialise an empty array for storing predictions
@@ -60,25 +61,25 @@
     console.log(`- File written to ${output_file_path}.`);
   }
 
-  global.generateFirstStepModelRasters = function () {
+  global.eoscalaGeneratePotentialEconomicActivityRasters = function () {
     //Declare local instance variables
-    var hyde_years = getHYDEYears();
+    var hyde_years = config.velkscala.hyde.hyde_years;
 
     //Iterate over all hyde_years
     for (var i = 0; i < hyde_years.length; i++) try {
       console.log(`Generating HYDE-SEDAC Processed Model Rasters (${i}/${hyde_years.length}) ..`);
-      generateFirstStepModelRaster(hyde_years[i]);
+      eoscalaGeneratePotentialEconomicActivityRaster(hyde_years[i]);
     } catch (e) {
       console.log(e);
     }
   };
 
-  global.getTotalGDPPPP = function (arg0_year) {
+  global.getTotalGDP_PPP = function (arg0_year) {
     //Convert from parameters
     var year = parseInt(arg0_year);
 
     //Declare local instance variables
-    var input_file_path = `./output/OLS_base_model_png/OLS_base_model_${year}_number.png`;
+    var input_file_path = `${config.defines.common.output_file_paths.OLS_potential_economic_activity_folder}OLS_base_model_${year}_number.png`;
     var total_gdp_ppp = 0;
 
     var gdp_image_data = loadNumberRasterImage(input_file_path);

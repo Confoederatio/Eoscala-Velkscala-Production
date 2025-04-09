@@ -5,8 +5,9 @@
     var year = parseInt(arg0_year);
 
     //Declare local instance variables
-    var hyde_population_file_path = `./output/HYDE_png/popc_${Math.abs(year)}${(year >= 0) ? "AD" : "BC"}_number.png`;
-    var world_bank_subdivisions_file_path = `./geographic_datasets/world_bank_subdivisions_for_ppp_calculations/world_bank_subdivisions.png`;
+    var common_defines = config.defines.common;
+    var hyde_population_file_path = `${common_defines.input_file_paths.hyde_folder}popc_${getHYDEYearName(year)}_number.png`;
+    var world_bank_subdivisions_file_path = common_defines.input_file_paths.world_bank_subdivisions;
 
     var population_image = loadNumberRasterImage(hyde_population_file_path);
     var world_bank_subdivisions_image = loadWorldBankSubdivisions(world_bank_subdivisions_file_path).data;
@@ -35,7 +36,7 @@
     var options = (arg0_options) ? arg0_options : {};
 
     //Declare local instance variables
-    var hyde_years = getHYDEYears();
+    var hyde_years = config.velkscala.hyde.hyde_years;
 
     //Iterate over all hyde_years
     for (var i = 0; i < hyde_years.length; i++) try {

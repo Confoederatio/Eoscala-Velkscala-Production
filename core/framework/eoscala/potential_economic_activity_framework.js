@@ -77,7 +77,7 @@
 
     //Declare local instance variables
     var all_coefficients = {};
-    var base_model_folder_path = `./output/OLS_base_model_data`;
+    var base_model_folder_path = config.defines.common.output_file_paths.OLS_potential_economic_activity_folder;
     var raw_coefficients = {};
 
     //Read all JSON files in directory
@@ -114,7 +114,7 @@
       hybrid_coefficients[key] = weightedGeometricMean(all_coefficients[key]);
 
     var output_data = { coefficients: hybrid_coefficients, raw_coefficients: raw_coefficients };
-    var output_path = `./output/OLS_base_model_data/geomean_${prefix.split('_').join(" ").trim().split(" ").join("_")}.json`;
+    var output_path = `${config.defines.common.output_file_paths.OLS_potential_economic_activity_folder}geomean_${prefix.split('_').join(" ").trim().split(" ").join("_")}.json`;
 
     fs.writeFileSync(output_path, JSON.stringify(output_data, null, 2));
     console.log(`HYDE-SEDAC weighted geometric mean calculated and saved at ${output_path}.`);
@@ -130,14 +130,14 @@
 
       //Declare local instance variables
       var hyde_data = [];
-      var hyde_dictionary = getHYDEDictionary();
-      var sedac_data = loadNumberRasterImage(`./output/SEDAC_png/SEDAC_${year}_number.png`).data;
+      var hyde_dictionary = config.velkscala.hyde.hyde_dictionary;
+      var sedac_data = loadNumberRasterImage(`${config.defines.common.output_file_prefix}${year}_number.png`).data;
 
       //Load each HYDE variable as a predictor
       var all_hyde_keys = Object.keys(hyde_dictionary);
 
       for (var key of all_hyde_keys) {
-        var local_file_path = `output/HYDE_png/${key}${year}${(year > 0) ? "AD" : "BC"}_number.png`;
+        var local_file_path = `output/HYDE_png/${key}${getHYDEYearName(year)}_number.png`;
         var local_rawdata = loadNumberRasterImage(local_file_path).data;
 
         hyde_data.push(local_rawdata);
@@ -160,7 +160,7 @@
     var year = parseInt(arg0_year);
 
     //Declare local instance variables
-    var hyde_dictionary = getHYDEDictionary();
+    var hyde_dictionary = config.velkscala.hyde.hyde_dictionary;
     var { X, Y } = await loadHYDESEDACYear(year);
 
     var all_hyde_keys = Object.keys(hyde_dictionary);
@@ -196,7 +196,7 @@
       year: year,
       coefficients: Object.fromEntries(all_hyde_keys.map((key, i) => [key, coefficients[i]]))
     };
-    var output_file_path = `./output/OLS_base_model_data/base_adjusted_model_${year}.json`;
+    var output_file_path = `${config.defines.common.output_file_paths.OLS_potential_economic_activity_folder}base_adjusted_model_${year}.json`;
 
     fs.writeFileSync(output_file_path, JSON.stringify(model_data_obj, null, 2));
     console.log(`Adjusted model data for ${year} saved successfully in ${output_file_path}.`);
@@ -218,8 +218,8 @@
     } catch (e) { console.error(e); }
 
     //Declare local instance variables
-    var hyde_dictionary = getHYDEDictionary();
-    var processed_model = FileManager.loadFileAsJSON(`./output/OLS_base_model_data/geomean_base_adjusted_model.json`);
+    var hyde_dictionary = config.velkscala.hyde.hyde_dictionary;
+    var processed_model = FileManager.loadFileAsJSON(`${config.defines.common.output_file_paths.OLS_potential_economic_activity_folder}geomean_base_adjusted_model.json`);
     var sedac_years = main.sedac_domain[1] - main.sedac_domain[0];
 
     var all_hyde_keys = Object.keys(hyde_dictionary);
@@ -235,14 +235,14 @@
       var local_year = main.sedac_domain[0] + i;
       console.log(`Processing HYDE-SEDAC geomean base adjusted model for ${local_year} ..`);
 
-      var local_file_path = `./output/SEDAC_png/SEDAC_${local_year}_number.png`;
+      var local_file_path = `${config.defines.common.output_file_paths.sedac_prefix}${local_year}_number.png`;
       var local_hyde_images = {}; //Maps image data to hyde stocks
       var total_logs = {};
       var valid_hyde_keys = [];
       all_hyde_keys.forEach((key) => {
         console.log(`- Processing HYDE key: ${key} ..`);
         try {
-          local_hyde_images[key] = loadNumberRasterImage(`./output/HYDE_png/${key}${Math.abs(local_year)}${(local_year >= 0) ? "AD" : "BC"}_number.png`);;
+          local_hyde_images[key] = loadNumberRasterImage(`${config.defines.common.output_file_paths.hyde_folder}${key}${getHYDEYearName(local_year)}_number.png`);;
           valid_hyde_keys.push(key);
         } catch (e) {
           console.warn(`- [WARN] Missing HYDE raster for ${key} in ${local_year}. Filtering out key.`);
@@ -314,7 +314,7 @@
     main.models.hyde_sedac.processed_model = processed_model;
 
     console.log(``)
-    var output_file_path = `./output/OLS_base_model_data/processed_base_model.json`;
+    var output_file_path = `${config.defines.common.output_file_paths.OLS_potential_economic_activity_folder}processed_base_model.json`;
     fs.writeFileSync(output_file_path, JSON.stringify(processed_model, null, 2));
   };
 
@@ -327,7 +327,7 @@
     var year = parseInt(arg0_year);
 
     //Declare local instance variables
-    var hyde_dictionary = getHYDEDictionary();
+    var hyde_dictionary = config.velkscala.hyde.hyde_dictionary;
     var { X, Y } = await loadHYDESEDACYear(year);
 
     var all_hyde_keys = Object.keys(hyde_dictionary);
@@ -351,7 +351,7 @@
       year: year,
       coefficients: Object.fromEntries(all_hyde_keys.map((key, i) => [key, coefficients[i]]))
     };
-    var output_file_path = `./output/OLS_base_model_data/base_model_${year}.json`;
+    var output_file_path = `${config.defines.common.output_file_paths.OLS_potential_economic_activity_folder}base_model_${year}.json`;
 
     fs.writeFileSync(output_file_path, JSON.stringify(model_data_obj, null, 2));
     console.log(`Model data for ${year} saved successfully in ${output_file_path}.`);

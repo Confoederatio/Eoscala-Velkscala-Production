@@ -33,7 +33,7 @@
     });
     var world_bank_subdivisions_image;
     if (options.is_sedac_convert_intl_dollars)
-      world_bank_subdivisions_image = loadWorldBankSubdivisions(`./geographic_datasets/world_bank_subdivisions_for_ppp_calculations/world_bank_subdivisions.png`);
+      world_bank_subdivisions_image = loadWorldBankSubdivisions(config.defines.common.input_file_paths.world_bank_subdivisions);
 
     //Iterate over all rows and columns
     for (var i = 0; i < image_rows; i++)

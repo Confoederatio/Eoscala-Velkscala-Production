@@ -2,7 +2,9 @@
 {
   global.startup = function () {
     //Declare local instance variables
-    var hyde_years = getHYDEYears();
+    var input_file_paths = config.defines.common.input_file_paths;
+    var output_file_paths = config.defines.common.output_file_paths;
+    var hyde_years = config.velkscala.hyde.hyde_years;
     var hyde_years_length = hyde_years.length;
     var hyde_years_index = 0;
 
@@ -13,8 +15,8 @@
     main.hyde_years_index = hyde_years_index;
 
     //Load all files
-    main.countries = FileManager.loadFileAsJSON(`./geographic_datasets/world_bank_subdivisions_for_ppp_calculations/world_bank_subdivisions.json`);
-    main.maddison_estimates = FileManager.loadFileAsJSON(`./economic_datasets/maddison/maddison_gdp_ppp_2011$.json`);
+    main.countries = getWorldBankSubdivisions();
+    main.maddison_estimates = FileManager.loadFileAsJSON(input_file_paths.maddison_estimates);
 
     //Initialise all calculations
     main.countries = getGDPPPPByCountry(main.countries);

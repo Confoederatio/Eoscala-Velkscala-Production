@@ -10,12 +10,12 @@
     loadMcEvedy();
 
     //Declare local instance variables
-    var hyde_population_file_path = `./output/HYDE_png/popc_${Math.abs(year)}${(year >= 0) ? "AD" : "BC"}_number.png`;
-    var hyde_population_percentage_file_path = `./output/HYDE_png/popc_${Math.abs(year)}${(year >= 0) ? "AD" : "BC"}_percentage.png`;
-    var hyde_urbc_file_path = `./output/HYDE_png/urbc_${Math.abs(year)}${(year >= 0) ? "AD" : "BC"}_number.png`;
-    var hyde_rurc_file_path = `./output/HYDE_png/rurc_${Math.abs(year)}${(year >= 0) ? "AD" : "BC"}_number.png`;
+    var hyde_population_file_path = `${config.defines.common.output_file_paths.hyde_folder}popc_${getHYDEYearName(year)}_number.png`;
+    var hyde_population_percentage_file_path = `${config.defines.common.output_file_paths.hyde_folder}popc_${getHYDEYearName(year)}_percentage.png`;
+    var hyde_urbc_file_path = `${config.defines.common.output_file_paths.hyde_folder}urbc_${getHYDEYearName(year)}_number.png`;
+    var hyde_rurc_file_path = `${config.defines.common.output_file_paths.hyde_folder}rurc_${getHYDEYearName(year)}_number.png`;
     var mcevedy_obj = main.population.mcevedy;
-    var mcevedy_subdivisions_file_path = `./geographic_datasets/mcevedy_and_jones_subdivisions_for_pop_calculations/mcevedy_subdivisions.png`;
+    var mcevedy_subdivisions_file_path = config.defines.common.input_file_paths.mcevedy_subdivisions;
 
     var all_mc_evedy_keys = Object.keys(mcevedy_obj);
     var population_image = loadNumberRasterImage(hyde_population_file_path);
@@ -172,8 +172,8 @@
       arg0_geomean_underweight : 166.5698064; //Approximate Geomean underweight for HYDE urbc_ from -4000BC-1500AD
 
     //Declare local instance variables
-    var hyde_path = `./output/HYDE_png/`;
-    var hyde_years = getHYDEYears();
+    var hyde_path = config.defines.common.output_file_paths.hyde_folder;
+    var hyde_years = config.velkscala.hyde.hyde_years;
 
     //Iterate over all HYDE raster files
     var all_input_files = FileManager.getAllFiles(hyde_path);
@@ -181,8 +181,8 @@
     //Iterate over all hyde_years
     for (var i = 0; i < hyde_years.length; i++)
       if (hyde_years[i] >= -4000 && hyde_years[i] <= 1500) {
-        var local_popc_file_path = `${hyde_path}popc_${Math.abs(hyde_years[i])}${(hyde_years[i] < 0) ? "BC" : "AD"}_number.png`;
-        var local_urbc_file_path = `${hyde_path}urbc_${Math.abs(hyde_years[i])}${(hyde_years[i] < 0) ? "BC" : "AD"}_number.png`;
+        var local_popc_file_path = `${hyde_path}popc_${getHYDEYearName(hyde_years[i])}_number.png`;
+        var local_urbc_file_path = `${hyde_path}urbc_${getHYDEYearName(hyde_years[i])}_number.png`;
 
         //Load raster images for urban population and total population
         var popc_image = loadNumberRasterImage(local_popc_file_path);
@@ -236,15 +236,15 @@
 
     //Declare local instance variables
     var cell_index = y*4320 + x;
-    var hyde_path = `./output/HYDE_png/`;
-    var hyde_years = (!years) ? getHYDEYears() : years;
+    var hyde_path = config.defines.common.output_file_paths.hyde_folder;
+    var hyde_years = (!years) ? config.velkscala.hyde.hyde_years : years;
     var population_obj = {};
 
     //Iterate over all hyde_years
     for (var i = 0; i < hyde_years.length; i++) try {
       console.log(`Gathering data for ${x}, ${y} - (${i}/${hyde_years.length}) ..`);
 
-      var local_popc_file_path = `${hyde_path}popc_${Math.abs(hyde_years[i])}${(hyde_years[i] < 0) ? "BC" : "AD"}_number.png`;
+      var local_popc_file_path = `${hyde_path}popc_${getHYDEYearName(hyde_years[i])}_number.png`;
       var popc_image = loadNumberRasterImage(local_popc_file_path);
 
       population_obj[hyde_years[i]] = popc_image.data[cell_index];
@@ -257,10 +257,10 @@
   global.loadMcEvedy = function () {
     //Load McEvedy into main
     if (!main.population) main.population = {};
-      main.population.mcevedy = FileManager.loadFileAsJSON(`./core/demographic_adjustment/mc_evedy_data.json`);
+      main.population.mcevedy = FileManager.loadFileAsJSON(config.defines.common.input_file_paths.mcevedy_data);
 
     //Declare local instance variables
-    var hyde_years = getHYDEYears();
+    var hyde_years = config.velkscala.hyde.hyde_years;
 
     //Perform polynomial interpolation on McEvedy data
     var all_mc_evedy_keys = Object.keys(main.population.mcevedy);
@@ -313,7 +313,7 @@
     var do_not_percentage_weight = arg0_do_not_percentage_weight;
 
     //Declare local instance variables
-    var hyde_years = getHYDEYears();
+    var hyde_years = config.velkscala.hyde.hyde_years;
 
     //Iterate over all hyde_years
     for (var i = 0; i < hyde_years.length; i++)

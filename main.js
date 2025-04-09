@@ -9,6 +9,7 @@ process.on('unhandledRejection', function (reason, p) {
 //File directories to load into Eoscala
 global.load_order = {
   load_directories: [
+    "common",
     "core",
     "UF"
   ],
@@ -47,6 +48,7 @@ global.main = {
 
 //Load all scripts
 FileManager.loadAllScripts();
+global.log.prefix = "[Eoscala]";
 
 //Global CLI handling
 {
