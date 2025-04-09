@@ -13,9 +13,10 @@
     //Declare local instance variables
     var common_defines = config.defines.common;
     var hyde_population_file_path = `${common_defines.input_file_paths.hyde_folder}popc_${getHYDEYearName(year)}_number.png`;
-    var return_obj = {};
     var world_bank_subdivisions_file_path = common_defines.input_file_paths.world_bank_subdivisions;
     var world_bank_subdivisions_image = loadWorldBankSubdivisions(world_bank_subdivisions_file_path);
+    
+    var return_obj = {};
 
     //Iterate over all pixels to sum up country populations based on HYDE statistics
     operateNumberRasterImage({
