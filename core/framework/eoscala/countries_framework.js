@@ -1,5 +1,11 @@
 //Initialise functions
 {
+  /**
+   * getCountryObjectByRGB() - Fetches the base main.countries object for a given RGBA value.
+   * @param {Array<number, number, number, number>} arg0_rgb - The RGBA parameter to fetch the country object for.
+   *  
+   * @returns {Object}
+   */
   global.getCountryObjectByRGB = function (arg0_rgb) {
     //Convert from parameters
     var rgb = getList(arg0_rgb);
@@ -20,6 +26,11 @@
     return main.countries.NODATA_value;
   };
 
+  /**
+   * getWorldBankSubdivisions() - Returns the initial World Bank state for main.countries.
+   * 
+   * @returns {Object}
+   */
   global.getWorldBankSubdivisions = function () {
     //Declare local instance variables
     var countries_obj = config.eoscala.history.countries;
@@ -77,18 +88,21 @@
     return countries_obj;
   };
 
+  /**
+   * loadWorldBankSubdivisions() - Loads the World Bank subdivisions image and returns it as a .png object.
+   * @param {String} arg0_image_path - The file path for World Bank subdivisions.
+   * 
+   * @returns {Object}
+   */
   global.loadWorldBankSubdivisions = function (arg0_image_path) {
     //Convert from parameters
     var image_path = arg0_image_path;
-
-    //Declare local instance variables
-    var world_bank_subdivisions_rawdata = fs.readFileSync(image_path);
 
     //Set main.countries_obj
     if (!main.countries)
       main.countries = getWorldBankSubdivisions();
 
     //Return statement
-    return pngjs.PNG.sync.read(world_bank_subdivisions_rawdata);
+    return loadImage(image_path);
   }
 }

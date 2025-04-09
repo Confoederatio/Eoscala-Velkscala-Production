@@ -89,6 +89,9 @@
     //Convert from parameters
     var file_path = arg0_file_path;
 
+    //Guard clause if file_path is already object
+    if (typeof file_path == "object") return file_path;
+
     //Declare local instance variables
     var rawdata = fs.readFileSync(file_path);
     var pixel_values = [];
