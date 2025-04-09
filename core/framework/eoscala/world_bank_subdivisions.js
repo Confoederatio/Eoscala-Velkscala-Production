@@ -19,7 +19,7 @@
   global.getWorldBankSubdivisions = function () {
     //Declare local instance variables
     var countries_obj = config.eoscala.history.countries;
-    var maddison_obj = getMaddisonSubdivisions();
+    var maddison_obj = config.eoscala.maddison.countries;
     var ppp_scalar_obj = config.eoscala.world_bank.ppp_scalars;
 
     //Iterate over all_countries_keys and input ppp_relative_scalar and ppp_absolute_scalar for each country
