@@ -1,7 +1,8 @@
 global.config = {
   defines: {},
   eoscala: {
-    history: {}
+    history: {},
+    world_bank: {}
   },
   velkscala: {}
 };
