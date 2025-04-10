@@ -25,8 +25,6 @@
     //Iterate over all pixels to fetch all region populations
     for (var i = 0; i < population_image.width*population_image.height; i++) {
       var local_index = i*4; //RGBA index
-      var local_x = i % population_image.width;
-      var local_y = Math.floor(i/population_image.width);
 
       var local_data = population_image.data[i];
       var local_key = [
@@ -50,8 +48,7 @@
     //Compute McEvedy scalars for each country
     for (var i = 0; i < all_mc_evedy_keys.length; i++) {
       var local_country = mcevedy_obj[all_mc_evedy_keys[i]];
-
-      //console.log(`Local country: `, local_country, `Year: `, year.toString());
+      
       if (local_country) {
         //Make sure cached .hyde_scalar is always removed before parsing
         delete local_country.hyde_scalar;
@@ -287,8 +284,6 @@
             values = sorted_indices.map(i => values[i]);
 
         //Iterate over all hyde_years and perform interpolation if within the given domain
-        var local_splines = new cubic_spline(years, values);
-
         if (values.length > 0 && years.length > 0)
           for (var x = 0; x < hyde_years.length; x++)
             if (hyde_years[x] >= years[0] && hyde_years[x] <= years[years.length - 1])

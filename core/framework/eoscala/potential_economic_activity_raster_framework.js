@@ -15,50 +15,41 @@
     var valid_hyde_keys = [];
 
     //Iterate over all_hyde_keys
-    console.log(`Generating projected GDP (PPP, Intl. 2000$) raster based on HYDE-SEDAC Processed Model for ${getHYDEYearName(year)} ..`);
+    log.info(`Generating projected GDP (PPP, Intl. 2000$) raster based on HYDE-SEDAC Processed Model for ${getHYDEYearName(year)} ..`);
     for (var i = 0; i < all_hyde_keys.length; i++) try {
       hyde_images[all_hyde_keys[i]] = loadNumberRasterImage(`${config.defines.common.output_file_paths.hyde_folder}${all_hyde_keys[i]}${getHYDEYearName(year)}_number.png`);
       valid_hyde_keys.push(all_hyde_keys[i]);
-      console.log(`- Loaded ${all_hyde_keys[i]} into memory.`);
+      log.info(`- Loaded ${all_hyde_keys[i]} into memory.`);
     } catch (e) {
-      console.warn(`- Failed to load ${all_hyde_keys[i]} into memory.`);
+      log.warn(`- Failed to load ${all_hyde_keys[i]} into memory.`);
     }
 
-    //Initialise an empty array for storing predictions
-    var height = hyde_images[valid_hyde_keys[0]].height;
-    var width = hyde_images[valid_hyde_keys[0]].width;
-    var predicted_data = new Array(width*height).fill(0);
-
-    console.log(`- Processing predicted GDP (PPP, Intl. 2000$) for ${year} ..`);
-    var png = new pngjs.PNG({ width: width, height: height, filterType: -1 });
-
-    //Iterate over all pixels
-    for (var i = 0; i < height; i++)
-      for (var x = 0; x < width; x++) {
-        var local_index = (i*width + x)*4;
+    log.info(`- Processing predicted GDP (PPP, Intl. 2000$) for ${year} ..`);
+    saveNumberRasterImage({
+      file_path: output_file_path,
+      height: hyde_images[valid_hyde_keys[0]].height,
+      width: hyde_images[valid_hyde_keys[0]].width,
+      function: function (arg0_index) {
+        //Convert from parameters
+        var index = arg0_index;
         var predicted_value = 0;
 
-        //Compute predicted_value based on HYDE stocks and coefficients
+        //Compute predicted value based on HYDE stocks and coefficients
         valid_hyde_keys.forEach((key) => {
           var coefficient = returnSafeNumber(coefficients[key], 1);
-          var hyde_value = returnSafeNumber(hyde_images[key].data[i*width + x]);
+          var hyde_value = returnSafeNumber(hyde_images[key].data[index]);
           var weighted_contribution = hyde_value*coefficient;
 
           predicted_value += weighted_contribution;
         });
 
-        //Encode as RGBA and store in PNG buffer
-        var rgba = encodeNumberAsRGBA(predicted_value);
-        png.data[local_index] = rgba[0];
-        png.data[local_index + 1] = rgba[1];
-        png.data[local_index + 2] = rgba[2];
-        png.data[local_index + 3] = rgba[3];
+        //Return statement
+        if (predicted_value)
+          return predicted_value;
       }
+    });
 
-    //Write file
-    console.log(`- Writing output file to ${output_file_path} ..`);
-    fs.writeFileSync(output_file_path, pngjs.PNG.sync.write(png));
-    console.log(`- File written to ${output_file_path}.`);
+    log.info(`- File written to ${output_file_path}.`);
   }
 
   global.eoscalaGeneratePotentialEconomicActivityRasters = function () {
@@ -67,27 +58,10 @@
 
     //Iterate over all hyde_years
     for (var i = 0; i < hyde_years.length; i++) try {
-      console.log(`Generating HYDE-SEDAC Processed Model Rasters (${i}/${hyde_years.length}) ..`);
+      log.info(`Generating HYDE-SEDAC Processed Model Rasters (${i}/${hyde_years.length}) ..`);
       eoscalaGeneratePotentialEconomicActivityRaster(hyde_years[i]);
     } catch (e) {
-      console.log(e);
+      log.info(e);
     }
-  };
-
-  global.getTotalGDP_PPP = function (arg0_year) {
-    //Convert from parameters
-    var year = parseInt(arg0_year);
-
-    //Declare local instance variables
-    var input_file_path = `${config.defines.common.output_file_paths.OLS_potential_economic_activity_folder}OLS_base_model_${year}_number.png`;
-    var total_gdp_ppp = 0;
-
-    var gdp_image_data = loadNumberRasterImage(input_file_path);
-
-    for (var i = 0; i < gdp_image_data.data.length; i++)
-      total_gdp_ppp += gdp_image_data.data[i];
-
-    //Return statement
-    return total_gdp_ppp;
   };
 }

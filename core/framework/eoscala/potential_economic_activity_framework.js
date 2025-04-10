@@ -57,6 +57,29 @@
     //Return statement
     return output_data;
   };
+  
+  /**
+   * getEoscalaPotentialEconomicActivityTotalGDP_PPP() - Gets the total GDP (PPP, Intl. 2000$) for a given year
+   * @param {number} arg0_year - The year to get the potential economic activity for.
+   * 
+   * @returns {number}
+  **/
+  global.getEoscalaPotentialEconomicActivityTotalGDP_PPP = function (arg0_year) {
+    //Convert from parameters
+    var year = parseInt(arg0_year);
+
+    //Declare local instance variables
+    var input_file_path = `${config.defines.common.output_file_paths.OLS_potential_economic_activity_prefix}${year}_number.png`;
+    var total_gdp_ppp = 0;
+
+    var gdp_image_data = loadNumberRasterImage(input_file_path);
+
+    for (var i = 0; i < gdp_image_data.data.length; i++)
+      total_gdp_ppp += gdp_image_data.data[i];
+
+    //Return statement
+    return total_gdp_ppp;
+  };
 
   /**
     loadHYDESEDACYear() - Loads HYDE-SEDAC data from raster files in ./output/ and uses them for OLS training
