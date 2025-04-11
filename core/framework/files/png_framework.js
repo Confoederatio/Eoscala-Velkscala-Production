@@ -158,19 +158,19 @@
     //Iterate over options.height; options.width
     for (var i = 0; i < options.height; i++)
       for (var x = 0; x < options.width; x++) {
-        var local_index = (i*options.width + x)*4; //RGBA index
+        var local_index = (i*options.width + x); //RGBA index to be multiplied by 4
 
-        saveNumberToPixel(image_obj, local_index, options.function(local_index));
+        saveNumberToPixel(png, local_index, options.function(local_index));
       }
 
     //Write PNG file
-    png.pack().pipe(fs.createWriteStream(options.file_path))
+    fs.writeFileSync(options.file_path, pngjs.PNG.sync.write(png));
 
     //Return statement
     return {
       width: options.width,
       height: options.height,
-      data: pixel_values
+      data: png.data
     };
   };
 
