@@ -7,4 +7,8 @@
     //Return statement
     return `${Math.abs(year)}${(year >= 0) ? "AD" : "BC"}`;
   };
+
+  global.generateHYDEYearRaster = function (arg0_year) {
+
+  };
 }

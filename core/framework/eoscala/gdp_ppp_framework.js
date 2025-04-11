@@ -4,6 +4,15 @@
   //Raster functions
   {
     /**
+     * scaleGDP_PPPRasters() - Scales all GDP (PPP) rasters to actual GDP (PPP) in 2000$, 100s.
+     */
+    global.scaleGDP_PPPRasters = function () {
+      scaleRastersToNordhaus(); //1. Scale to Globak GDP first to remove distortions
+      scaleRastersToMaddison(); //2. Country-level scaling
+      scaleRastersToNordhaus(); //3. Rescale to realign with Global GDP
+    };
+
+    /**
      * scaleRasterToNordhaus() - Scales a raster image of GDP (PPP) to Nordhaus Global GDP (PPP) 2000$. Returns the total global GDP for that year.
      * @param {number} arg0_year - The year to scale the raster image to.
      * 
