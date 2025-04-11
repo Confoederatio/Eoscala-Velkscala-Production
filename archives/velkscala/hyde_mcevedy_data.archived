@@ -1465,6 +1465,7 @@
       130,
       140
     ],
+    //Multiplied by 1.10; as McEvedy states, this takes care of Bhutan
     "population": {
       "-400": 0.825,
       "0": 1.1,

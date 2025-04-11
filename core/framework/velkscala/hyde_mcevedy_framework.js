@@ -5,10 +5,6 @@
     var year = parseInt(arg0_year);
     var options = (arg1_options) ? arg1_options : {};
 
-    //Make sure McEvedy is loaded first
-    main.population = {};
-    loadMcEvedy();
-
     //Declare local instance variables
     var hyde_population_file_path = `${config.defines.common.output_file_paths.hyde_folder}popc_${getHYDEYearName(year)}_number.png`;
     var hyde_population_percentage_file_path = `${config.defines.common.output_file_paths.hyde_folder}popc_${getHYDEYearName(year)}_percentage.png`;
