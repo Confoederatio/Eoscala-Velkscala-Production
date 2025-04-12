@@ -209,7 +209,8 @@
         }
       }
     });
-    console.log(`max_value = ${max_value}, index = ${max_index}`);
+    
+    log.info(`max_value = ${max_value}, index = ${max_index}`);
 
     //2. Save percentage raster image
     var png = new pngjs.PNG({

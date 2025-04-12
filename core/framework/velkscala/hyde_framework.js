@@ -70,6 +70,22 @@
     }
   };
 
+  /**
+   * generateHYDEYearRasters() - Generates all missing HYDE year rasters.
+   */
+  global.generateHYDEYearRasters = function () {
+    //Declare local instance variables
+    var hyde_obj = config.velkscala.hyde;
+    
+    var actual_hyde_years = hyde_obj.actual_hyde_years;
+    var hyde_years = hyde_obj.hyde_years;
+
+    //Iterate over all hyde_years
+    for (var i = 0; i < hyde_years.length; i++)
+      if (!actual_hyde_years.includes(hyde_years[i]))
+        generateHYDEYearRaster(hyde_years[i]);
+  };
+
   global.generateHYDEYearPercentageRaster = function (arg0_year) {
     //Convert from parameters
   };
@@ -82,5 +98,47 @@
     hyde_obj.maximum_actual_hyde_year = Math.max(...hyde_obj.actual_hyde_years);
     hyde_obj.minimum_hyde_year = Math.min(...hyde_obj.hyde_years);
     hyde_obj.minimum_actual_hyde_year = Math.min(...hyde_obj.actual_hyde_years);
+  };
+
+  global.recalculateHYDEPopulationDensity = function (arg0_year) {
+    //Convert from parameters
+    var year = parseInt(arg0_year);
+
+    //Declare local instance variables
+    var input_file_path = `${config.defines.common.output_file_paths.hyde_folder}popc_${getHYDEYearName(year)}_number.png`;
+    var output_file_path = `${config.defines.common.output_file_paths.hyde_folder}popd_${getHYDEYearName(year)}_number.png`;
+    var output_percentage_file_path = `${config.defines.common.output_file_paths.hyde_folder}popd_${getHYDEYearName(year)}_percentage.png`;
+
+    //Load input image
+    var land_image = loadNumberRasterImage(config.defines.common.input_file_paths.hyde_land_area);
+    var input_image = loadNumberRasterImage(input_file_path);
+
+    log.info(`- Recalculating population density for ${year} ..`);
+    saveNumberRasterImage({
+      file_path: output_file_path,
+      width: input_image.width,
+      height: input_image.height,
+      function: function (arg0_index) {
+        //Convert from parameters
+        var local_index = arg0_index;
+
+        //Declare local instance variables
+        var local_land_value = land_image.data[local_index];
+        var local_value = input_image.data[local_index];
+
+        //Return statement
+        return returnSafeNumber(local_value/local_land_value);
+      }
+    });
+    savePercentageRasterImage(output_file_path, output_percentage_file_path);
+  };
+
+  global.recalculateHYDEPopulationDensities = function () {
+    //Declare local instance variables
+    var hyde_years = config.velkscala.hyde.hyde_years;
+
+    //Iterate over all hyde_years
+    for (var i = 0; i < hyde_years.length; i++)
+      recalculateHYDEPopulationDensity(hyde_years[i]);
   };
 }
