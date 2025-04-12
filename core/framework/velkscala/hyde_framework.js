@@ -12,6 +12,7 @@
    * generateHYDEYearRaster() - Fills in missing HYDE years by performing linear or polynomial interpolation.
    * @param {number} arg0_year - The year to generate the raster set for.
    * @param {Object} [arg1_options]
+   *  @param {Array<String>} [arg1_options.hyde_keys] - The keys to generate the raster set for. All by default.
    *  @param {String} [arg1_options.mode="linear"] - The mode to use for interpolation. Either 'linear' or 'polynomial'.
    *  @param {boolean} [arg1_options.skip_file_if_it_exists=false] - Whether to skip the file if it already exists.
    */
@@ -26,7 +27,8 @@
     var hyde_domain = findDomain(actual_hyde_years, year);
 
     //Iterate over all keys in hyde_dictionary and perform linear interpolation
-    var all_hyde_keys = Object.keys(hyde_dictionary);
+    var all_hyde_keys = (options.hyde_keys) ? 
+      getList(options.hyde_keys) : Object.keys(hyde_dictionary);
 
     log.info(`Generating Rasters for year ..`);
     for (var i = 0; i < all_hyde_keys.length; i++) {
@@ -57,7 +59,7 @@
             var left_number = local_left_image.data[local_index];
             var right_number = local_right_image.data[local_index];
 
-            var local_value = linearInterpolation([hyde_domain[0], hyde_domain[1]], [left_number, right_number], year);
+            var local_value = Math.round(linearInterpolation([hyde_domain[0], hyde_domain[1]], [left_number, right_number], year));
               if (local_value < 0) local_value = 0;
 
             //Return statement

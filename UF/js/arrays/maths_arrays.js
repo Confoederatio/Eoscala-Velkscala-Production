@@ -705,15 +705,30 @@
     if (x_values[0] == x_values[1]) return y_values[0];
     
     //Declare local instance variables
-    var slope = (y_values[1] - y_values[0]) / (x_values[1] - x_values[0]);
-
-    //Return statement
-    if (x < x_values[0]) 
-      return y_values[0] + (x - x_values[0]) * slope;
-    if (x > x_values[1]) 
-      return y_values[1] + (x - x_values[1]) * slope;
-    return y_values[0] + (x - x_values[0]) * slope;
+    var left_x = x_values[0];
+    var right_x = x_values[1];
+    var left_y = y_values[0];
+    var right_y = y_values[1];
+  
+    //Use exponential growth if both values are positive
+    if (left_y > 0 && right_y > 0) {
+      var growth_rate = Math.log(right_y / left_y) / (right_x - left_x);
+      if (x < left_x)
+        return left_y * Math.exp(growth_rate * (x - left_x));
+      if (x > right_x)
+        return right_y * Math.exp(growth_rate * (x - right_x));
+      return left_y + (x - left_x) * (right_y - left_y) / (right_x - left_x); //Linear interpolation
+    }
+  
+    //Return statement; fallback to standard linear if growth is not defined
+    var slope = (right_y - left_y) / (right_x - left_x);
+    if (x < left_x)
+      return left_y + (x - left_x) * slope;
+    if (x > right_x)
+      return right_y + (x - right_x) * slope;
+    return left_y + (x - left_x) * slope;
   };
+  
 
   /*
     LUDecompositionMatrix() - Performs LUD decomposition on a matrix.

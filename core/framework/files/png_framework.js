@@ -161,7 +161,7 @@
       for (var x = 0; x < options.width; x++) {
         var local_index = (i*options.width + x); //RGBA index to be multiplied by 4
 
-        saveNumberToPixel(png, local_index, options.function(local_index, png.data[local_index]));
+        saveNumberToPixel(png, local_index, options.function(local_index));
       }
 
     //Write PNG file
@@ -189,23 +189,27 @@
 
     //Declare local instance variables
     var input_image_obj = loadNumberRasterImage(input_file_path);
+    var max_index = -1;
     var max_value = 0;
     
     //1. Fetch max_value
     operateNumberRasterImage({
-      file_path: output_file_path,
+      file_path: input_file_path,
       width: input_image_obj.width,
       height: input_image_obj.height,
-      function: function (arg0_index) {
+      function: function (arg0_index, arg1_number) {
         //Convert from parameters
         var index = arg0_index;
+        var number = arg1_number;
 
-        //Declare local instance variables
-        var number = input_image_obj.data[index];
-
-        max_value = Math.max(max_value, number);
+        //Set max_value
+        if (max_value < number) {
+          max_index = index;
+          max_value = number;
+        }
       }
     });
+    console.log(`max_value = ${max_value}, index = ${max_index}`);
 
     //2. Save percentage raster image
     var png = new pngjs.PNG({
@@ -217,11 +221,13 @@
     //Iterate over all rows and columns
     for (var i = 0; i < input_image_obj.height; i++)
       for (var x = 0; x < input_image_obj.width; x++) {
-        var local_index = (i*input_image_obj.width + x)*4; //RGBA index
-        var local_value = input_image_obj.data[local_index/4];
+        var index = (i*input_image_obj.width + x);
+        var local_index = index*4; //RGBA index
+        var local_value = input_image_obj.data[index];
 
         var local_g = Math.min(Math.round((local_value/max_value)*255), 255);
-        var rgba = [0, local_g, 0, 255];
+        var rgba = (local_value) ? 
+          [0, local_g, 0, 255] : [0, 0, 0, 0];
 
         //Set pixel values
         png.data[local_index] = rgba[0];
