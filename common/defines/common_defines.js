@@ -2,6 +2,7 @@ config.defines.common = {
   input_file_paths: {
     //Eoscala
     hyde_folder: `./input/velkscala/hyde/`,
+      hyde_land_area: `./output/velkscala/hyde_metadata/land_area.png`,
     maddison_estimates: `./input/eoscala/maddison/maddison_gdp_ppp_2011$.json`,
     regional_subdivisions: `./input/eoscala/regional_subdivisions.png`,
     sedac_folder: `./input/eoscala/sedac/`,

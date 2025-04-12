@@ -695,6 +695,26 @@
     return result;
   };
 
+  global.linearInterpolation = function (arg0_x_values, arg1_y_values, arg2_x_to_interpolate) {
+    var x_values = getList(arg0_x_values);
+    var y_values = getList(arg1_y_values);
+    var x = parseFloat(arg2_x_to_interpolate);
+    
+    //Guard clause to make sure x_values and y_values are valid
+    if (x_values.length < 2 || y_values.length < 2) return y_values[0];
+    if (x_values[0] == x_values[1]) return y_values[0];
+    
+    //Declare local instance variables
+    var slope = (y_values[1] - y_values[0]) / (x_values[1] - x_values[0]);
+
+    //Return statement
+    if (x < x_values[0]) 
+      return y_values[0] + (x - x_values[0]) * slope;
+    if (x > x_values[1]) 
+      return y_values[1] + (x - x_values[1]) * slope;
+    return y_values[0] + (x - x_values[0]) * slope;
+  };
+
   /*
     LUDecompositionMatrix() - Performs LUD decomposition on a matrix.
     arg0_matrix: (Array<Array, ...>) - The matrix to pass to the function.
