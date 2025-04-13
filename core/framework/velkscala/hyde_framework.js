@@ -30,7 +30,7 @@
     var all_hyde_keys = (options.hyde_keys) ? 
       getList(options.hyde_keys) : Object.keys(hyde_dictionary);
 
-    log.info(`Generating Rasters for year ..`);
+    log.info(`Generating Rasters for year ${year} ..`);
     for (var i = 0; i < all_hyde_keys.length; i++) {
       var local_left_image_path = `${config.defines.common.output_file_paths.hyde_folder}${all_hyde_keys[i]}${getHYDEYearName(hyde_domain[0])}_number.png`;
       var local_right_image_path = `${config.defines.common.output_file_paths.hyde_folder}${all_hyde_keys[i]}${getHYDEYearName(hyde_domain[1])}_number.png`;
@@ -68,6 +68,9 @@
         });
       savePercentageRasterImage(local_number_output_file_path, local_percentage_output_file_path);
     }
+
+    //Recalculate population density afterwards
+    recalculateHYDEPopulationDensity(year);
   };
 
   /**

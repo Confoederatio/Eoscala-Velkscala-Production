@@ -195,7 +195,23 @@
 
     //Return statement
     return (array.length == 0 || array.every((element) => element == undefined));
-  }
+  };
+
+  /**
+   * mergeArray() - Given two arrays, return the concatenation.
+   * @param {Array} arg0_input_array 
+   * @param {Array} arg1_array 
+   * 
+   * @returns {Array}
+   */
+  global.mergeArrays = function (arg0_input_array, arg1_array) {
+    //Convert from parameters
+    var input_array = getList(arg0_input_array);
+    var array = getList(arg1_array);
+
+    //Return statement
+    return input_array.concat(array);
+  };
 
   /*
     moveElement() - Moves an element from one index to another.

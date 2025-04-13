@@ -1,5 +1,14 @@
 //Initialise functions
 {
+  /**
+   * adjustRastersFromHYDEToMcEvedy() - Adjusts HYDE rasters to McEvedy after a fresh reset.
+   */
+  global.adjustRastersFromHYDEToMcEvedy = function () {
+    generateHYDEYearRasters();
+    recalculateHYDEPopulationDensities();
+    clampHYDERastersToMcEvedy();
+  };
+
   global.clampHYDEToMcEvedy = function (arg0_year, arg1_options) {
     //Convert from parameters
     var year = parseInt(arg0_year);
@@ -49,15 +58,32 @@
         //Make sure cached .hyde_scalar is always removed before parsing
         delete local_country.hyde_scalar;
 
-        if (local_country.population)
+        if (local_country.population) {
+          var country_has_no_population = false;
+
           if (local_country.population[year.toString()] != undefined && local_country.hyde_population != undefined) {
+            var actual_population = local_country.population[year.toString()];
+
+            if (actual_population <= 0)
+              country_has_no_population = true;
+          } else {
+            country_has_no_population = true;
+          }
+
+          //Check to see if population should be set to 0 or whether it should be scaled to McEvedy
+          if (!country_has_no_population) {
             try {
               var actual_population = local_country.population[year.toString()];
               var hyde_population = local_country.hyde_population[year.toString()];
 
               console.log(`${all_mcevedy_keys[i]}: Actual population: `, actual_population, `Hyde population: `, hyde_population);
-              if (actual_population != undefined && hyde_population != undefined)
+              if (actual_population != undefined && hyde_population != undefined) {
                 local_country.hyde_scalar = actual_population/hyde_population;
+
+                //Because we know HYDE3.3 is ultra-conservative, wherever McEvedy is even more conservative, we should reject the result when prior to 1000AD
+                if (actual_population < hyde_population && year < 1000)
+                  local_country.hyde_scalar = 1;
+              }
             } catch (e) {
               console.error(`Error dealing with country: `, all_mcevedy_keys[i], local_country);
               console.error(e);
@@ -70,6 +96,7 @@
             if (local_country.population[all_population_keys[0]] == 0 && parseInt(year) <= parseInt(all_population_keys[0]))
               local_country.hyde_scalar = 0;
           }
+        }
       }
     }
 
@@ -273,6 +300,15 @@
     //Declare local instance variables
     var hyde_years = config.velkscala.hyde.hyde_years;
 
+    var all_hyde_years = [];
+    var hyde_domain = [getMinimumInArray(hyde_years), getMaximumInArray(hyde_years)];
+
+    //Iterate over hyde_domain and fill in all_hyde_years
+    /*for (var i = hyde_domain[0]; i <= hyde_domain[1]; i++)
+      all_hyde_years.push(i);*/
+    all_hyde_years = all_hyde_years.concat(hyde_years);
+    all_hyde_years = sortArray(all_hyde_years, { mode: "ascending" });
+
     //Perform polynomial interpolation on McEvedy data
     var all_mcevedy_keys = Object.keys(main.population.mcevedy);
 
@@ -294,23 +330,68 @@
 
         //Ensure values; years are sorted properly
         var sorted_indices = years.map((_, i) => i).sort((a, b) => years[a] - years[b]);
-            years = sorted_indices.map(i => years[i]);
-            values = sorted_indices.map(i => values[i]);
+          years = sorted_indices.map(i => years[i]);
+          values = sorted_indices.map(i => values[i]);
 
         //Iterate over all hyde_years and perform interpolation if within the given domain
         if (values.length > 0 && years.length > 0)
-          for (var x = 0; x < hyde_years.length; x++)
-            if (hyde_years[x] >= years[0] && hyde_years[x] <= years[years.length - 1])
-              local_country.population[hyde_years[x]] = cubicSplineInterpolation(years, values, hyde_years[x]);
+          for (var x = 0; x < all_hyde_years.length; x++)
+            if (all_hyde_years[x] >= years[0] && all_hyde_years[x] <= years[years.length - 1])
+              local_country.population[all_hyde_years[x]] = Math.round(
+                returnSafeNumber(cubicSplineInterpolation(years, values, all_hyde_years[x]))
+              );
 
         //Iterate over all hyde_years and set to 0 if first local_country.population year is < 0.0001
         var first_population_value = local_country.population[years[0]];
 
         if (first_population_value < 0.0001)
-          for (var x = 0; x < hyde_years.length; x++)
-            if (hyde_years[x] <= years[0])
-             local_country.population[hyde_years[x]] = 0;
+          for (var x = 0; x < all_hyde_years.length; x++)
+            if (all_hyde_years[x] <= years[0])
+             local_country.population[all_hyde_years[x]] = 0;
+
+        //Remove any McEvedy data projected after 1975
+        var all_population_keys = Object.keys(local_country.population);
+
+        for (var x = 0; x < all_population_keys.length; x++)
+          if (parseInt(all_population_keys[x]) > 1975)
+            delete local_country.population[all_population_keys[x]];
+
+        //Backcast McEvedy data using annualised growth rates over the nearest 100 years
+        /*
+        var first_actual_year = parseInt(Object.keys(local_country.population)[0]);
+        var sum_growth_rate = 0;
+        var valid_years = 0;
+        
+        log.info(`- x = ${first_actual_year}; x < ${first_actual_year + 100}`);
+        for (var x = first_actual_year; x < first_actual_year + 100; x++) {
+          var local_next_value = local_country.population[x + 1];
+          var local_value = local_country.population[x];
+
+          if (local_value != undefined && local_next_value != undefined) {
+            sum_growth_rate += local_next_value/local_value;
+            valid_years++;
+          }
+        }
+
+        var annualised_growth_rate = sum_growth_rate/valid_years;
+        var base_year = first_actual_year;
+        var base_value = local_country.population[base_year.toString()];
+
+        for (var x = 0; x < all_hyde_years.length; x++) {
+          var year = all_hyde_years[x];
+
+          if (year < base_year && local_country.population[year.toString()] == undefined) {
+            var years_behind = base_year - year;
+
+            local_country.population[year.toString()] = Math.round(
+              returnSafeNumber(base_value/Math.pow(annualised_growth_rate, years_behind))
+            );
+          }
+        }
+        */
       }
+
+      log.info(`- Finished McEvedy processing for ${all_mcevedy_keys[i]} ..`);
     }
 
     //Set RGB aliases

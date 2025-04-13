@@ -633,7 +633,7 @@
 
     //Return statement
     return tridiagonal_matrix;
-  }
+  };
 
   /*
     inverseMatrix() - Inverts a matrix.
@@ -728,7 +728,6 @@
       return right_y + (x - right_x) * slope;
     return left_y + (x - left_x) * slope;
   };
-  
 
   /*
     LUDecompositionMatrix() - Performs LUD decomposition on a matrix.
