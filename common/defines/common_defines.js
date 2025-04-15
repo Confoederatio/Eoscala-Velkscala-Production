@@ -24,6 +24,6 @@ config.defines.common = {
     potential_economic_activity_folder: `./output/eoscala/potential_economic_activity/`,
 
     //Velkscala
-    hyde_folder: `./output/velkscala/hyde/`
+    hyde_folder: `./output/velkscala/hyde_3.2/`
   }
 };

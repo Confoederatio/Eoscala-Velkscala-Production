@@ -264,7 +264,7 @@
         console.log(`- ${local_urbc_file_path} ..`);
         fs.writeFileSync(local_urbc_file_path, pngjs.PNG.sync.write(new_urbc_image));
       }
-  }
+  };
 
   global.getPopulationOfCellOverTime = function (arg0_x, arg1_y, arg2_years) {
     //Convert from parameters
