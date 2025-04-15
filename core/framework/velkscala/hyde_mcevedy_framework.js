@@ -5,8 +5,8 @@
    */
   global.adjustRastersFromHYDEToMcEvedy = function () {
     generateHYDEYearRasters();
-    recalculateHYDEPopulationDensities();
     clampHYDERastersToMcEvedy();
+    recalculateHYDEPopulationDensities();
   };
 
   global.clampHYDEToMcEvedy = function (arg0_year, arg1_options) {
