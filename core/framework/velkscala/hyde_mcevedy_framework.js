@@ -4,7 +4,7 @@
    * adjustRastersFromHYDEToMcEvedy() - Adjusts HYDE rasters to McEvedy after a fresh reset.
    */
   global.adjustRastersFromHYDEToMcEvedy = function () {
-    generateHYDEYearRasters();
+    //generateHYDEYearRasters();
     clampHYDERastersToMcEvedy();
     recalculateHYDEPopulationDensities();
   };
@@ -81,8 +81,8 @@
                 local_country.hyde_scalar = actual_population/hyde_population;
 
                 //Because we know HYDE3.3 is ultra-conservative, wherever McEvedy is even more conservative, we should reject the result when prior to 1000AD
-                if (actual_population < hyde_population && year < 1000)
-                  local_country.hyde_scalar = 1;
+                /*if (actual_population < hyde_population && year < 1000)
+                  local_country.hyde_scalar = 1;*/
               }
             } catch (e) {
               console.error(`Error dealing with country: `, all_mcevedy_keys[i], local_country);
@@ -92,8 +92,15 @@
             //Check to see if population should be set to 0
             var all_population_keys = Object.keys(local_country.population)
               .sort((a, b) => parseInt(a) - parseInt(b));
+            var first_actual_population_key;
 
-            if (local_country.population[all_population_keys[0]] == 0 && parseInt(year) <= parseInt(all_population_keys[0]))
+            for (var x = 0; x < all_population_keys.length; x++)
+              if (local_country.population[all_population_keys[x]] > 0) {
+                first_actual_population_key = all_population_keys[x];
+                break;
+              }
+
+            if ((local_country.population[all_population_keys[0]] == 0 && parseInt(year) <= parseInt(first_actual_population_key)) || first_actual_population_key == undefined)
               local_country.hyde_scalar = 0;
           }
         }
@@ -355,40 +362,6 @@
         for (var x = 0; x < all_population_keys.length; x++)
           if (parseInt(all_population_keys[x]) > 1975)
             delete local_country.population[all_population_keys[x]];
-
-        //Backcast McEvedy data using annualised growth rates over the nearest 100 years
-        /*
-        var first_actual_year = parseInt(Object.keys(local_country.population)[0]);
-        var sum_growth_rate = 0;
-        var valid_years = 0;
-        
-        log.info(`- x = ${first_actual_year}; x < ${first_actual_year + 100}`);
-        for (var x = first_actual_year; x < first_actual_year + 100; x++) {
-          var local_next_value = local_country.population[x + 1];
-          var local_value = local_country.population[x];
-
-          if (local_value != undefined && local_next_value != undefined) {
-            sum_growth_rate += local_next_value/local_value;
-            valid_years++;
-          }
-        }
-
-        var annualised_growth_rate = sum_growth_rate/valid_years;
-        var base_year = first_actual_year;
-        var base_value = local_country.population[base_year.toString()];
-
-        for (var x = 0; x < all_hyde_years.length; x++) {
-          var year = all_hyde_years[x];
-
-          if (year < base_year && local_country.population[year.toString()] == undefined) {
-            var years_behind = base_year - year;
-
-            local_country.population[year.toString()] = Math.round(
-              returnSafeNumber(base_value/Math.pow(annualised_growth_rate, years_behind))
-            );
-          }
-        }
-        */
       }
 
       log.info(`- Finished McEvedy processing for ${all_mcevedy_keys[i]} ..`);
