@@ -22,6 +22,7 @@ config.defines.common = {
     OLS_potential_economic_activity_suffix: `_number.png`,
     OLS_potential_economic_activity_weights: `./output/eoscala/potential_economic_activity_data/processed_base_model.json`,
     potential_economic_activity_folder: `./output/eoscala/potential_economic_activity/`,
+    regional_eoscala_file: `./output/eoscala/regional_gdp_ppp.json`,
 
     //Velkscala
     hyde_folder: `./output/velkscala/hyde_3.2/`

@@ -4,7 +4,7 @@
    * adjustRastersFromHYDEToMcEvedy() - Adjusts HYDE rasters to McEvedy after a fresh reset.
    */
   global.adjustRastersFromHYDEToMcEvedy = function () {
-    //generateHYDEYearRasters();
+    generateHYDEYearRasters();
     clampHYDERastersToMcEvedy();
     recalculateHYDEPopulationDensities();
   };
@@ -158,9 +158,9 @@
               if (population_percentage < 0.5)
                 population_percentage = 0.5; //Minimum percentage
 
-              local_value = local_value*population_percentage;
-              local_rural_value = local_rural_value*population_percentage;
-              local_urban_value = local_urban_value*population_percentage;
+              local_value = Math.ceil(local_value*population_percentage);
+              local_rural_value = Math.ceil(local_rural_value*population_percentage);
+              local_urban_value = Math.ceil(local_urban_value*population_percentage);
             }
           }
 
