@@ -104,14 +104,14 @@ global.log.prefix = "[Eoscala]";
       output: process.stdout,
   });
   //Log init settings
-  log.info(`[Eoscala] Initialised with:`);
-  log.info(`[Eoscala] - RAM allocation: ${v8.getHeapStatistics().heap_size_limit/1024/1024} MB`);
+  log.info(`[Eoscala/Velkscala] Initialised with:`);
+  log.info(`[Eoscala/Velkscala] - RAM allocation: ${v8.getHeapStatistics().heap_size_limit/1024/1024} MB`);
 
   function handleCLI () {
     //Run Eoscala frame
-    cli.question("[Eoscala] > ", (input_string) => {
+    cli.question("[Eoscala/Velkscala] > ", (input_string) => {
         if (input_string.toLowerCase() === "exit") {
-          log.info("Exiting Eoscala.");
+          log.info("Exiting Eoscala/Velkscala.");
 
           //Break CLI
           cli.close();
