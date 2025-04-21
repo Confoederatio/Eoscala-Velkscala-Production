@@ -131,9 +131,9 @@ generate_gdp_ppp_3d_region_map <- function (arg0_region_key, arg1_year, arg2_opt
 }
 
 #generate_gdp_ppp_3d_region_map("northern_america", 2022, region_options$northern_america)
-#generate_gdp_ppp_3d_region_map("latin_america", 1500, region_options$latin_america)
+generate_gdp_ppp_3d_region_map("latin_america", 1400, region_options$latin_america)
 #generate_gdp_ppp_3d_region_map("europe", 100, region_options$europe)
-#generate_gdp_ppp_3d_region_map("eastern_europe_and_russia", 800, region_options$eastern_europe_and_russia)
+#generate_gdp_ppp_3d_region_map("eastern_europe_and_russia", 1400, region_options$eastern_europe_and_russia)
 #generate_gdp_ppp_3d_region_map("central_asia", 1850, region_options$central_asia)
 #generate_gdp_ppp_3d_region_map("middle_east", -8000, region_options$middle_east)
 #generate_gdp_ppp_3d_region_map("maghreb_egypt", 1850, region_options$maghreb_egypt)
@@ -161,7 +161,7 @@ generate_gdp_ppp_3d_region_map <- function (arg0_region_key, arg1_year, arg2_opt
 # generate_gdp_ppp_3d_region_map("europe", 1960, region_options$europe)
 # generate_gdp_ppp_3d_region_map("europe", 1990, region_options$europe)
 # generate_gdp_ppp_3d_region_map("europe", 2000, region_options$europe)
-generate_gdp_ppp_3d_region_map("europe", 2022, region_options$europe)
+#generate_gdp_ppp_3d_region_map("europe", 2022, region_options$europe)
 
 #generate_gdp_ppp_3d_region_map("eastasia", 1850, region_options$eastasia)
 #generate_gdp_ppp_3d_region_map("eastasia", 1900, region_options$eastasia)
