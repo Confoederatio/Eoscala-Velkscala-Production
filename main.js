@@ -48,7 +48,7 @@ global.main = {
 
 //Load all scripts
 FileManager.loadAllScripts();
-global.log.prefix = "[Eoscala]";
+global.log.prefix = "[Eoscala/Velkscala]";
 
 //Global CLI handling
 {

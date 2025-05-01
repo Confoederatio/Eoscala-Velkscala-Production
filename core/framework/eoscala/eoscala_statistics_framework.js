@@ -8,8 +8,10 @@
     var hyde_years = config.velkscala.hyde.hyde_years;
     var return_obj = {};
     
-    for (var i = 0; i < hyde_years.length; i++)
+    for (var i = 0; i < hyde_years.length; i++) {
       return_obj[hyde_years[i]] = getCountryPotentialEconomicActivity(country_id, hyde_years[i]);
+      log.info(`Processed ${country_id} for ${hyde_years[i]}: Potential Economic Activity = ${parseNumber(return_obj[hyde_years[i]])}`);
+    }
 
     //Return statement
     return return_obj;
