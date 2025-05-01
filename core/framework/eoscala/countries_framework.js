@@ -44,6 +44,9 @@
     for (var i = 0; i < all_countries_keys.length; i++) {
       var local_value = countries_obj[all_countries_keys[i]];
 
+      //Set ID and other fields
+      local_value.id = all_countries_keys[i];
+
       //Maddison data
       for (var x = 0; x < all_maddison_keys.length; x++) {
         var local_maddison_obj = maddison_obj[all_maddison_keys[x]];

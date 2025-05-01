@@ -1,5 +1,57 @@
 //Initialise functions
 {
+  global.getCountryPotentialEconomicActivities = function (arg0_country_id) {
+    //Convert from parameters
+    var country_id = arg0_country_id;
+
+    //Declare local instance variables
+    var hyde_years = config.velkscala.hyde.hyde_years;
+    var return_obj = {};
+    
+    for (var i = 0; i < hyde_years.length; i++)
+      return_obj[hyde_years[i]] = getCountryPotentialEconomicActivity(country_id, hyde_years[i]);
+
+    //Return statement
+    return return_obj;
+  };
+
+  global.getCountryPotentialEconomicActivity = function (arg0_country_id, arg1_year) {
+    //Convert from parameters
+    var country_id = arg0_country_id;
+    var year = returnSafeNumber(arg1_year);
+
+    //Declare local instance variables
+    var countries_image_path = config.defines.common.input_file_paths.world_bank_subdivisions;
+    var potential_economic_activity_file_path = `${config.defines.common.output_file_paths.OLS_potential_economic_activity_prefix}${year}${config.defines.common.output_file_paths.OLS_potential_economic_activity_suffix}`;
+    var potential_economic_activity_image = loadNumberRasterImage(potential_economic_activity_file_path);
+    var potential_economic_activity_sum = 0;
+
+    var countries_image = loadImage(countries_image_path);
+
+    //Iterate over all pixels to fetch all region GDP PPPs
+    operateNumberRasterImage({
+      file_path: potential_economic_activity_file_path,
+      function: function (arg0_index, arg1_number) {
+        var local_index = arg0_index;
+        var local_number = arg1_number;
+
+        var local_key = [
+          countries_image.data[local_index],
+          countries_image.data[local_index + 1],
+          countries_image.data[local_index + 2]
+        ].join(",");
+
+        var local_country = getCountryObjectByRGB(local_key);
+
+        if (local_country.id == country_id)
+          potential_economic_activity_sum += local_number;
+      }
+    });
+
+    //Return statement
+    return potential_economic_activity_sum;
+  };
+
   global.printAdjustedGDP_PPP = function (arg0_year) {
     //Convert from parameters
     var year = returnSafeNumber(arg0_year);
