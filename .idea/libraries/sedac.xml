@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="sedac">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/archives/economic_datasets/sedac/kummu_etal_scidata_code.zip!/" />
+      <root url="jar://$PROJECT_DIR$/archives/economic_datasets/sedac/doi_10_5061_dryad_dk1j0__v20200213.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
