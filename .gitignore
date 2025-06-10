@@ -1,5 +1,7 @@
 economic_datasets/
 geographic_datasets/
+input/velkscala/LUH2
+input/velkscala/KK10
 node_modules/
 output/
 .Rproj.user
