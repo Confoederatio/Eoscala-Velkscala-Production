@@ -76,19 +76,19 @@
 
   /**
    * loadNumberRasterImage() - Loads a number raster image into the assigned variable.
-   * @param {String} arg0_file_path 
-   * 
-   * @returns {Object}
-   */
-  /**
-   * loadNumberRasterImage() - Loads a number raster image into the assigned variable.
-   * @param {String} arg0_file_path 
+   * @param {String} arg0_file_path
+   * @param {Object} [arg1_options]
+   *  @param {String} [arg1_options.type="32bit_int_positive"] - How to decode colour values. '32bit_int_positive'/'greyscale'.
    * 
    * @returns {width: number, height: number, data: number[]}
    */
-  global.loadNumberRasterImage = function (arg0_file_path) {
+  global.loadNumberRasterImage = function (arg0_file_path, arg1_options) {
     //Convert from parameters
     var file_path = arg0_file_path;
+    var options = (arg1_options) ? arg1_options : {};
+
+    //Initialise options
+    if (!options.type) options.type = "32bit_int_positive";
 
     //Guard clause if file_path is already object
     if (typeof file_path == "object") return file_path;
@@ -101,12 +101,19 @@
     //Iterate over all pixels
     for (var i = 0; i < png.width*png.height; i++) {
       var colour_index = i*4;
-      var colour_value = decodeRGBAAsNumber([
+      var colour_value;
+      var local_rgba = [
         png.data[colour_index],
         png.data[colour_index + 1],
         png.data[colour_index + 2],
         png.data[colour_index + 3]
-      ]);
+      ];
+
+      if (options.type == "32bit_int_positive") {
+        colour_value = decodeRGBAAsNumber(local_rgba);
+      } else if (options.type == "greyscale") {
+        colour_value = local_rgba[0]/255;
+      }
 
       pixel_values.push(colour_value);
     }
