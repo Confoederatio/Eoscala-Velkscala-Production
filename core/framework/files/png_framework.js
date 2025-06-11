@@ -144,8 +144,10 @@
    * saveNumberRasterImage() - Saves a number raster image to a file.
    * @param {Object} [arg0_options]
    *  @param {String} [arg0_options.file_path] - The file path to save the image to.
-   *  @param {Number} [arg0_options.width=1] - The width of the image to save.
+   *  @param {String} [arg0_options.type="32bit_int_positive"] - How to save colours to the end image. Either '32bit_int_positive'/'greyscale'.
+   *
    *  @param {Number} [arg0_options.height=1] - The height of the image to save.
+   *  @param {Number} [arg0_options.width=1] - The width of the image to save.
    *  @param {Function} [arg0_options.function] - (arg0_index) - The function to apply to each pixel. Must return a number. [0, 0, 0, 0] if undefined.
    */
   global.saveNumberRasterImage = function (arg0_options) {
@@ -155,6 +157,8 @@
     //Initialise options
     options.height = returnSafeNumber(options.height, 1);
     options.width = returnSafeNumber(options.width, 1);
+
+    if (!options.type) options.type = "32bit_int_positive";
 
     //Declare local instance variables
     var png = new pngjs.PNG({
@@ -168,7 +172,7 @@
       for (var x = 0; x < options.width; x++) {
         var local_index = (i*options.width + x); //RGBA index to be multiplied by 4
 
-        saveNumberToPixel(png, local_index, options.function(local_index));
+        saveNumberToPixel(png, local_index, options.function(local_index), options.type);
       }
 
     //Write PNG file
@@ -256,20 +260,27 @@
    * @param {String} arg0_image_object - The image object to use.
    * @param {number} arg1_index - The index of the pixel to save the number to.
    * @param {number} arg2_number - The number to save to the pixel.
+   * @param {String} [arg3_type="32bit_int_positive"] - Either '32bit_int_positive'/'greyscale'.
    * 
    * @returns {[number, number, number, number]}
    */
-  global.saveNumberToPixel = function (arg0_image_object, arg1_index, arg2_number) {
+  global.saveNumberToPixel = function (arg0_image_object, arg1_index, arg2_number, arg3_type) {
     //Convert from parameters
     var image_obj = (typeof arg0_image_object != "string") ? arg0_image_object : loadNumberRasterImage(arg0_image_object);
     var index = arg1_index*4;
     var number = arg2_number;
+    var type = (arg3_type) ? arg3_type : "32bit_int_positive";
 
     //Declare local instance variables
-    var rgba = (number) ? 
-      encodeNumberAsRGBA(number) : [0, 0, 0, 0];
-    
-    //Set pixel values
+    var rgba;
+
+    if (type == "greyscale") {
+      rgba = [parseInt(number*255), parseInt(number*255), parseInt(number*255), 255];
+    } else {
+      rgba = (number) ?
+        encodeNumberAsRGBA(number) : [0, 0, 0, 0];
+    }
+
     image_obj.data[index] = rgba[0];
     image_obj.data[index + 1] = rgba[1];
     image_obj.data[index + 2] = rgba[2];

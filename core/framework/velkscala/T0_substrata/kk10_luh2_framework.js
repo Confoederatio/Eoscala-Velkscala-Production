@@ -15,8 +15,9 @@
 				log.info(`Generating LUH2 raster for ${getHYDEYearName(i)} ..`);
 
 				for (var x = 0; x < luh2_stocks.length; x++) try {
-					var local_file_path = `${luh2_config.input_folder}${luh2_config.file_prefix}${luh2_stocks[x]}/output_folder/${luh2_config.file_prefix}${luh2_stocks[x]}_${i}.png`;
+					var local_file_path = `${luh2_config.input_folder}${luh2_stocks[x]}/output_folder/${luh2_config.file_prefix}${luh2_stocks[x]}_${i}.png`;
 
+					log.info(`- Loading ${local_file_path} ..`);
 					luh2_images[luh2_stocks[x]] = loadNumberRasterImage(local_file_path, {
 						type: "greyscale"
 					});
@@ -27,6 +28,8 @@
 				log.info(`- Averaging LUH2 raster for ${i} ..`);
 				saveNumberRasterImage({
 					file_path: output_file_path,
+					type: "greyscale",
+
 					height: luh2_images[luh2_stocks[0]].height,
 					width: luh2_images[luh2_stocks[0]].width,
 					function: function (arg0_index) {
