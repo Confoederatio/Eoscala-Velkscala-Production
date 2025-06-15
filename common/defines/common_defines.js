@@ -10,6 +10,8 @@ config.defines.common = {
     world_bank_subdivisions: `./input/eoscala/world_bank/world_bank_subdivisions.png`,
 
     //Velkscala
+    kk10luh2_folder: `./output/velkscala/KK10LUH2/`,
+    kk10luh2_prefix: `KK10LUH2_`,
     mcevedy_data: `./input/velkscala/mcevedy/mcevedy_data.json`,
     mcevedy_subdivisions: `./input/velkscala/mcevedy/mcevedy_subdivisions.png`
   },
