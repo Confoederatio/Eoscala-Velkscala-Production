@@ -55,11 +55,23 @@
 			} catch (e) { console.error(e); }
 	};
 
-	global.generateKK10_LUH2Rasters = function () {
+	global.generateKK10_LUH2Rasters = function () { //[WIP] - Finish function body
+		//Declare local instance variables
+		var hyde_years = config.velkscala.hyde.hyde_years;
+		var luh2_config = config.velkscala.luh2;
+		var kk10_config = config.velkscala.kk10;
 
+		//Iterate over all hyde_years
+		for (var i = 0; i < hyde_years.length; i++) {
+			//1. If this is an intersection of both the luh2_domain and kk10_domain; average rasters
+
+			//2. If this is of only the luh2_domain; merely copy the luh2 raster to its destination
+
+			//3. If this is of only the kk10_domain; merely copy the kk10 raster to its destination
+		}
 	};
 
-	global.scaleKK10_LUH2Rasters = function () {
+	global.scaleKK10_LUH2Rasters = function () { //[WIP] - Finish function body
 
 	};
 }
