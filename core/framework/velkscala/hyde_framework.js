@@ -1,5 +1,15 @@
 //Initialise functions
 {
+  global.fixHYDEOutliersForYear = function (arg0_year) { //[WIP] - Finish function body
+    //Convert from parameters
+  };
+
+  /**
+   * getHYDEYearName() - Fetches the formal name of a HYDE year given a year integer.
+   * @param {number} arg0_year
+   *
+   * @returns {String}
+   */
   global.getHYDEYearName = function (arg0_year) {
     //Convert from parameters
     var year = parseInt(arg0_year);
@@ -16,7 +26,7 @@
    *  @param {String} [arg1_options.mode="linear"] - The mode to use for interpolation. Either 'linear' or 'polynomial'.
    *  @param {boolean} [arg1_options.skip_file_if_it_exists=false] - Whether to skip the file if it already exists.
    */
-  global.generateHYDEYearRaster = function (arg0_year, arg1_options) { //[WIP] - Finish function body
+  global.generateHYDEYearRaster = function (arg0_year, arg1_options) {
     //Convert from parameters
     var year = parseInt(arg0_year);
     var options = (arg1_options) ? arg1_options : {};
@@ -73,9 +83,7 @@
     recalculateHYDEPopulationDensity(year);
   };
 
-  /**
-   * generateHYDEYearRasters() - Generates all missing HYDE year rasters.
-   */
+  //generateHYDEYearRasters() - Generates all missing HYDE year rasters.
   global.generateHYDEYearRasters = function () {
     //Declare local instance variables
     var hyde_obj = config.velkscala.hyde;
@@ -89,7 +97,7 @@
         generateHYDEYearRaster(hyde_years[i]);
   };
 
-  global.generateHYDEYearPercentageRaster = function (arg0_year) {
+  global.generateHYDEYearPercentageRaster = function (arg0_year) { //[WIP] - Finish function body
     //Convert from parameters
   };
 

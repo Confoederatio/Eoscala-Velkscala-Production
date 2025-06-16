@@ -48,5 +48,6 @@ config.velkscala.hyde = {
 
     //Post-addendum
     -1000, -2000, -3000, -4000, -5000, -6000, -7000, -8000, -9000, -10000
-  ]
+  ],
+  outlier_fallback_model: `kk10luh2` //Fetches fallback from config.defines.common.input_file_paths: _folder, _prefix
 };
