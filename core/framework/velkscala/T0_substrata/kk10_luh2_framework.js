@@ -120,6 +120,7 @@
 
 	global.scaleKK10_LUH2RastersToRegional = function () { //[WIP] - Finish function body
 		//1. Scale rasters to Nelson first
+		
 
 		//2. Scale rasters to OWID/HYDE second
 	};
