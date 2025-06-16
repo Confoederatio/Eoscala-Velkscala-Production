@@ -1,4 +1,4 @@
-config.velkscala.nelson = {
+{
   regions: {
     //Values are pixel diameters, and must be processed to get the actual population of the region. Values are only noted from 3000BC to 1900AD.
     //New World
@@ -653,4 +653,4 @@ config.velkscala.nelson = {
       }
     }
   }
-};
+}
