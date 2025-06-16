@@ -114,7 +114,13 @@
 		} catch (e) { console.error(e); }
 	};
 
-	global.scaleKK10_LUH2Rasters = function () { //[WIP] - Finish function body
+	global.scaleKK10_LUH2RastersToGlobal = function () { //[WIP] - Finish function body
 
+	};
+
+	global.scaleKK10_LUH2RastersToRegional = function () { //[WIP] - Finish function body
+		//1. Scale rasters to Nelson first
+
+		//2. Scale rasters to OWID/HYDE second
 	};
 }

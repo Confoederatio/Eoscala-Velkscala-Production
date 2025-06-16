@@ -1,5 +1,10 @@
 //Initialise functions
 {
+  /**
+   * fixHYDEOutliersForYear() - Fixes HYDE outliers by flagging stray pixels that are more than a threshold off of neighbouring pixels (typically an order of magnitude). These stray pixels are replaced by data from LUH2/KK10 scaled to global population, or the average of neighbouring pixels if outside domain. The same applies for raster masks.
+   *
+   * @param {number} arg0_year
+   */
   global.fixHYDEOutliersForYear = function (arg0_year) { //[WIP] - Finish function body
     //Convert from parameters
   };
