@@ -1,4 +1,11 @@
 {
+  scale: {
+    "36": 10000000,
+    "101": 100000000,
+    "197": 400000000,
+    "309": 1000000000,
+    "432": 2000000000
+  },
   regions: {
     //Values are pixel diameters, and must be processed to get the actual population of the region. Values are only noted from 3000BC to 1900AD.
     //New World

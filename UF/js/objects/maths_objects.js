@@ -113,7 +113,30 @@
 
     //Return statement
     return operateObjects(object, ot_object, `i = i/x`, options);
-  }
+  };
+
+  /**
+   * getKeyRange() - Gets the range of a key given a scale numerical dictionary object, returning the two keys it is closest to.
+   * @param {Object} arg0_object
+   * @param {String} arg1_key
+   *
+   * @returns {Array<number, number>}
+   */
+  global.getKeyRange = function (arg0_object, arg1_key) {
+    //Convert from parameters
+    var object = arg0_object;
+    var key = arg1_key;
+
+    //Declare local instance variables
+    var all_keys = Object.keys(object).map(Number).sort((a, b) => a - b);
+
+    //Check where the number fits
+    for (var i = 0; i < all_keys.length; i++)
+      if (key < all_keys[i])
+        //Return statement
+        return (i == 0) ? [null, keys[0]] : [keys[i - 1], keys[i]];
+    return [keys[keys.length - 1], null];
+  };
 
   /*
     getObjectMaximum() - Fetches the maximum value within an object.
