@@ -10,6 +10,7 @@
     //Values are pixel diameters, and must be processed to get the actual population of the region. Values are only noted from 3000BC to 1900AD.
     //New World
     e_north_america: {
+      colour: [87, 122, 175],
       population: {
         "-3000": 10,
         "-2200": 11,
@@ -37,6 +38,7 @@
       }
     },
     e_south_america: {
+      colour: [109, 153, 88],
       population: {
         "-3000": 7,
         "-2200": 8,
@@ -64,6 +66,7 @@
       }
     },
     middle_america: {
+      colour: [71, 165, 101],
       population: {
         "-3000": 19,
         "-2200": 24,
@@ -91,6 +94,7 @@
       }
     },
     northern_america: {
+      colour: [175, 63, 76],
       population: {
         "-3000": 8,
         "-2200": 8,
@@ -118,6 +122,7 @@
       }
     },
     oceania: {
+      colour: [183, 142, 91],
       population: {
         "-3000": 8,
         "-2200": 8,
@@ -145,6 +150,7 @@
       }
     },
     southern_america: {
+      colour: [146, 179, 211],
       population: {
         "-3000": 7,
         "-2200": 8.5,
@@ -172,6 +178,7 @@
       }
     },
     w_north_america: {
+      colour: [60, 115, 173],
       population: {
         "-3000": 9,
         "-2200": 9,
@@ -199,6 +206,7 @@
       }
     },
     w_south_america: {
+      colour: [186, 80, 80],
       population: {
         "-3000": 17,
         "-2200": 18,
@@ -225,9 +233,8 @@
         "1900": 45
       }
     },
-
-    //Old World
     australia: {
+      colour: [74, 137, 84],
       population: {
         "-3000": 10,
         "-2200": 10,
@@ -254,7 +261,10 @@
         "1900": 24.5
       }
     },
+
+    //Old World
     central_africa: {
+      colour: [47, 114, 142],
       population: {
         "-3000": 9,
         "-2200": 10,
@@ -282,6 +292,7 @@
       }
     },
     central_asia: {
+      colour: [41, 193, 175],
       population: {
         "-3000": 15,
         "-2200": 18,
@@ -309,6 +320,7 @@
       }
     },
     east_indies: {
+      colour: [112, 113, 158],
       population: {
         "-3000": 12,
         "-2200": 15,
@@ -336,6 +348,7 @@
       }
     },
     eastern_africa: {
+      colour: [155, 101, 77],
       population: {
         "-3000": 13,
         "-2200": 16,
@@ -363,6 +376,7 @@
       }
     },
     eastern_asia: {
+      colour: [173, 62, 62],
       population: {
         "-3000": 33,
         "-2200": 38,
@@ -390,6 +404,7 @@
       }
     },
     eastern_europe: {
+      colour: [20, 114, 30],
       population: {
         "-3000": 15,
         "-2200": 17,
@@ -417,6 +432,7 @@
       }
     },
     middle_east: {
+      colour: [33, 153, 73],
       population: {
         "-3000": 31,
         "-2200": 36,
@@ -444,6 +460,7 @@
       }
     },
     northern_africa: {
+      colour: [214, 123, 107],
       population: {
         "-3000": 15,
         "-2200": 17,
@@ -471,6 +488,7 @@
       }
     },
     northern_asia: {
+      colour: [0, 112, 3],
       population: {
         "-3000": 8,
         "-2200": 8,
@@ -498,6 +516,7 @@
       }
     },
     north_eastern_asia: {
+      colour: [221, 122, 122],
       population: {
         "-3000": 9,
         "-2200": 11,
@@ -525,6 +544,7 @@
       }
     },
     south_eastern_asia: {
+      colour: [178, 94, 100],
       population: {
         "-3000": 12,
         "-2200": 13,
@@ -552,6 +572,7 @@
       }
     },
     southern_africa: {
+      colour: [153, 119, 100],
       population: {
         "-3000": 8,
         "-2200": 17,
@@ -579,6 +600,7 @@
       }
     },
     southern_asia: {
+      colour: [214, 144, 83],
       population: {
         "-3000": 32,
         "-2200": 38,
@@ -606,6 +628,7 @@
       }
     },
     western_africa: {
+      colour: [0, 109, 54],
       population: {
         "-3000": 14,
         "-2200": 16,
@@ -633,6 +656,7 @@
       }
     },
     western_europe: {
+      colour: [47, 97, 170],
       population: {
         "-3000": 19,
         "-2200": 26,
