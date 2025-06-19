@@ -66,11 +66,10 @@
 
     //Iterate over all years in domain
     for (var i = 0; i < options.years.length; i++)
-      if (options.years[i] <= returnSafeNumber(years[years.length - 1])) {
+      if (options.years >= years[0] && options.years[i] <= returnSafeNumber(years[years.length - 1])) {
         let current_year = options.years[i];
 
-        if (current_year <= returnSafeNumber(years[years.length - 1]))
-          object[current_year] = cubicSplineInterpolation(years, values, current_year);
+        object[current_year] = cubicSplineInterpolation(years, values, current_year);
       }
 
     //Return statement
@@ -442,6 +441,32 @@
         return (mode == "descending") ? b - a : a - b;
       })
     );
+  };
+
+  /**
+   * sortObjectByKey() - Sorts an object by key.
+   * @param {Object} arg0_object
+   * @param {Object} [arg1_options]
+   *  @param {String} [arg1_options.type="descending"] - The order to sort the object in. 'ascending'/'descending'. 'descending by default.
+   */
+  global.sortObjectByKey = function (arg0_object, arg1_options) {
+    //Convert from parameters
+    var object = arg0_object;
+    var options = (arg1_options) ? arg1_options : {};
+
+    //Declare local instance variables
+    var mode = (options.type) ? options.type : "descending";
+    var sorted_keys = Object.keys(object)
+      .map((key) => key)
+    .sort((a, b) => (type == "ascending") ?
+      a.localeCompare(b) : b.localeCompare(a));
+    var sorted_obj = {};
+
+    for (let key of sorted_keys)
+      sorted_obj[key] = object[key];
+
+    //Return statement
+    return sorted_obj;
   };
 
   global.sortYearValues = function (arg0_object) {

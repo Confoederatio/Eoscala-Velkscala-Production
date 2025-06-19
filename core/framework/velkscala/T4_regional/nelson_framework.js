@@ -7,7 +7,7 @@
 	 */
 	global.getNelsonDataObject = function () {
 		//Return statement
-		return FileManager.loadFileAsJSON(config.defines.common.nelson_data);
+		return FileManager.loadFileAsJSON(config.defines.common.input_file_paths.nelson_data);
 	};
 
 	/**
@@ -81,8 +81,8 @@
 		}
 
 		//2. Convert diameter values to Nelson population figures
-		for (var i = 0; i < all_regions_keys.length; i++) {
-			var local_region = nelson_obj.regions[all_regions_keys];
+		for (var i = 0; i < all_regions_keys.length; i++) try {
+			var local_region = nelson_obj.regions[all_regions_keys[i]];
 
 			//Iterate over all_population_keys
 			var all_population_keys = Object.keys(local_region.population);
@@ -94,9 +94,11 @@
 					nelson_obj: nelson_obj
 				});
 			}
+		} catch (e) {
+			console.error(`Error when parsing ${all_regions_keys[i]}:`, e);
 		}
 
 		//Return statement
-		return nelson_obj;
+		return sortObjectByKey(nelson_obj, { type: "ascending"});
 	};
 }

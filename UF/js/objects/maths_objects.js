@@ -134,8 +134,8 @@
     for (var i = 0; i < all_keys.length; i++)
       if (key < all_keys[i])
         //Return statement
-        return (i == 0) ? [null, keys[0]] : [keys[i - 1], keys[i]];
-    return [keys[keys.length - 1], null];
+        return (i == 0) ? [null, all_keys[0]] : [all_keys[i - 1], all_keys[i]];
+    return [all_keys[all_keys.length - 1], null];
   };
 
   /*

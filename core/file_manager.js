@@ -91,7 +91,14 @@ module.exports = {
     var file_path = arg0_file_path;
 
     //Return statement
-    return JSON.parse(fs.readFileSync(file_path, "utf8"));
+    try {
+      return JSON.parse(fs.readFileSync(file_path, "utf8"));
+    } catch (e) {
+      //Try JSON5/JSOL import
+      try {
+        return eval(`(` + fs.readFileSync(file_path, "utf8") + `)`);
+      } catch (e) {}
+    }
   },
 
   save: function (arg0_file_path) {
