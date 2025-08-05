@@ -458,7 +458,7 @@
     var mode = (options.type) ? options.type : "descending";
     var sorted_keys = Object.keys(object)
       .map((key) => key)
-    .sort((a, b) => (type == "ascending") ?
+    .sort((a, b) => (options.type == "ascending") ?
       a.localeCompare(b) : b.localeCompare(a));
     var sorted_obj = {};
 
@@ -467,6 +467,36 @@
 
     //Return statement
     return sorted_obj;
+  };
+  
+  /**
+   * sortObjectKeys() - Sorts an object by their key's numeric values.
+   * @param {Object} arg0_object
+   * @param {Object} [arg1_options]
+   *  @param {String} [arg1_options.type="descending"] - The order to sort the object in. 'ascending'/'descending'. 'descending by default.
+   */
+  global.sortObjectKeys = function (arg0_object, arg1_options) {
+    //Convert from parameters
+    var object = arg0_object;
+    var options = (arg1_options) ? arg1_options : {};
+    
+    //Initialise options
+    if (!options.type) options.type = "ascending";
+    
+    //Declare local instance variables
+    var sorted_keys = Object.keys(object).sort((a, b) => {
+      //Return statement
+      if (options.type == "ascending") return Number(a) - Number(b);
+      return Number(b) - Number(a);
+    });
+    var return_obj = {};
+    
+    //Build new return_obj
+    for (let i = 0; i < sorted_keys.length; i++)
+      return_obj[sorted_keys[i]] = object[sorted_keys[i]];
+    
+    //Return statement
+    return return_obj;
   };
 
   global.sortYearValues = function (arg0_object) {

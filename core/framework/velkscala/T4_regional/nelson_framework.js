@@ -75,9 +75,11 @@
 			var local_region = nelson_obj.regions[all_regions_keys[i]];
 
 			//Interpolate regional .population figures
+			local_region.population = sortObjectKeys(local_region.population);
 			local_region.population = cubicSplineInterpolationObject(local_region.population, {
 				years: hyde_config.hyde_years
 			});
+			console.log(local_region);
 		}
 
 		//2. Convert diameter values to Nelson population figures
@@ -99,6 +101,6 @@
 		}
 
 		//Return statement
-		return sortObjectByKey(nelson_obj, { type: "ascending"});
+		return sortObjectKeys(nelson_obj, { type: "ascending"});
 	};
 }

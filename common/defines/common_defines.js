@@ -14,7 +14,11 @@ config.defines.common = {
     kk10luh2_prefix: `KK10LUH2_`,
     mcevedy_data: `./input/velkscala/T0_substrata/mcevedy/mcevedy_data.json`,
     mcevedy_subdivisions: `./input/velkscala/T0_substrata/mcevedy/mcevedy_subdivisions.png`,
-    nelson_data: `./input/velkscala/T4_regional/nelson_data.json5`
+    
+    nelson_data: `./input/velkscala/T4_regional/nelson_data.json5`,
+    nelson_subdivisions: `./input/velkscala/T4_regional/nelson_regions.png`,
+    owid_data: `./input/velkscala/T4_regional/owid_data.csv`,
+    owid_subdivisions: `./input/velkscala/T4_regional/owid_continents.png`
   },
   output_file_paths: {
     //Eoscala
