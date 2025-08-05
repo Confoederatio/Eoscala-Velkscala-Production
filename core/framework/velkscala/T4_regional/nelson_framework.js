@@ -67,37 +67,36 @@
 		var nelson_config = config.velkscala.nelson;
 		var nelson_obj = getNelsonDataObject();
 
-		//1. Interpolate config.velkscala.nelson.regions for all HYDE years within Nelson's domain
+		//1. Calculate est. regional populations from diameters over Nelson domain
 		var all_regions_keys = Object.keys(nelson_obj.regions);
 
 		//Iterate over all_regions_keys
-		for (var i = 0; i < all_regions_keys.length; i++) {
-			var local_region = nelson_obj.regions[all_regions_keys[i]];
-
-			//Interpolate regional .population figures
-			local_region.population = sortObjectKeys(local_region.population);
-			local_region.population = cubicSplineInterpolationObject(local_region.population, {
-				years: hyde_config.hyde_years
-			});
-			console.log(local_region);
-		}
-
-		//2. Convert diameter values to Nelson population figures
 		for (var i = 0; i < all_regions_keys.length; i++) try {
 			var local_region = nelson_obj.regions[all_regions_keys[i]];
-
+			
 			//Iterate over all_population_keys
 			var all_population_keys = Object.keys(local_region.population);
-
+			
 			for (var x = 0; x < all_population_keys.length; x++) {
 				var local_value = local_region.population[all_population_keys[x]];
-
+				
 				local_region.population[all_population_keys[x]] = getNelsonPopulationFromDiameter(local_value, {
 					nelson_obj: nelson_obj
 				});
 			}
 		} catch (e) {
 			console.error(`Error when parsing ${all_regions_keys[i]}:`, e);
+		}
+
+		//2. Interpolate population values for Nelson population figures
+		for (var i = 0; i < all_regions_keys.length; i++) {
+			var local_region = nelson_obj.regions[all_regions_keys[i]];
+			
+			//Interpolate regional .population figures
+			local_region.population = cubicSplineInterpolationObject(local_region.population, {
+				years: hyde_config.hyde_years
+			});
+			local_region.population = sortObjectKeys(local_region.population);
 		}
 
 		//Return statement

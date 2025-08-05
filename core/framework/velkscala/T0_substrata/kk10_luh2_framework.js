@@ -68,12 +68,12 @@
 		for (var i = 0; i < hyde_years.length; i++) try {
 			var in_luh2_domain = (hyde_years[i] >= luh2_config.luh2_domain[0] && hyde_years[i] <= luh2_config.luh2_domain[1]);
 			var in_kk10_domain = (hyde_years[i] >= kk10_config.kk10_domain[0] && hyde_years[i] <= kk10_config.kk10_domain[1]);
-			var output_file_path = `${common_defines.kk10luh2_folder}/${common_defines.kk10luh2_prefix}${hyde_years[i]}.png`;
+			var output_file_path = `${common_defines.input_file_paths.kk10luh2_folder}/${common_defines.input_file_paths.kk10luh2_prefix}${hyde_years[i]}.png`;
 
 			if (in_luh2_domain || in_kk10_domain) {
 				//1. If this is an intersection of both the luh2_domain and kk10_domain; average rasters
-				var luh2_file_path = `${luh2_config.output_folder}/${luh2_config.file_prefix}${hyde_years[i]}.png`;
-				var kk10_file_path = `${kk10_config.input_folder}/${kk10_config.file_prefix}${hyde_years[i]}.png`;
+				var luh2_file_path = `${luh2_config.output_folder}${luh2_config.file_prefix}${hyde_years[i]}.png`;
+				var kk10_file_path = `${kk10_config.input_folder}${kk10_config.file_prefix}${hyde_years[i]}.png`;
 
 				if (in_luh2_domain && in_kk10_domain) {
 					var luh2_image = loadNumberRasterImage(luh2_file_path, { type: "greyscale" });

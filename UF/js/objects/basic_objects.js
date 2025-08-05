@@ -66,7 +66,7 @@
 
     //Iterate over all years in domain
     for (var i = 0; i < options.years.length; i++)
-      if (options.years >= years[0] && options.years[i] <= returnSafeNumber(years[years.length - 1])) {
+      if (options.years[i] >= years[0] && options.years[i] <= returnSafeNumber(years[years.length - 1])) {
         let current_year = options.years[i];
 
         object[current_year] = cubicSplineInterpolation(years, values, current_year);
