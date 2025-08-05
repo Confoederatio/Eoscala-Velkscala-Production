@@ -19,6 +19,7 @@
    */
   global.getWorldPopulationObject = function () {
     //Declare local instance variables
+    var hyde_years = config.velkscala.hyde.hyde_years;
     var return_obj = {};
     var world_pop_obj = config.velkscala.world_population_estimates;
     
@@ -44,7 +45,10 @@
     for (let i = 0; i < all_years.length; i++)
       return_obj[all_years[i]] = weightedGeometricMean(return_obj[all_years[i]]);
     
+    //Interpolate return_obj over all HYDE years
+    return_obj = cubicSplineInterpolationObject(return_obj, { years: hyde_years });
+    
     //Return statement
-    return return_obj;
+    return sortObjectKeys(return_obj, { type: "ascending" });
   }
 }
