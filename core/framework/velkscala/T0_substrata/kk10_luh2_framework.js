@@ -94,12 +94,18 @@
 					
 					function: function (arg0_index) {
 						//Convert from parameters
-						var local_index = arg0_index;
+						var local_index = arg0_index*4; //Index must be multiplied by 4 since we are using loadImage(), and not loadNumberRasterImage()
 						
 						//Return statement
 						return (greyscale_image.data[local_index]/255)*population_per_pixel;
 					}
 				});
+			} else {
+				//Simply copy over the original Velkscala raster otherwise
+				var velkscala_image_path = `${common_defines.output_file_paths.hyde_folder}/popc_${getHYDEYearName(hyde_years[i])}_number.png`;
+				
+				log.info(`- Copying HYDE-McEvedy for GeoPNG for ${hyde_years[i]} ..`);
+				fs.copyFileSync(velkscala_image_path, output_file_path);
 			}
 		}
 	};
@@ -176,6 +182,8 @@
 	global.scaleKK10_LUH2RastersToRegional = function () { //[WIP] - Finish function body
 		//Declare local instance variables
 		var common_defines = config.defines.common;
+		var hyde_years = config.velkscala.hyde.hyde_years;
+		
 		
 		//1. Scale rasters to Nelson first
 		
