@@ -47,6 +47,7 @@
     
     //Interpolate return_obj over all HYDE years
     return_obj = cubicSplineInterpolationObject(return_obj, { years: hyde_years });
+    return_obj = multiplyObject(return_obj, 1000000); //Figures are given in millions, so multiply them by a million
     
     //Return statement
     return sortObjectKeys(return_obj, { type: "ascending" });

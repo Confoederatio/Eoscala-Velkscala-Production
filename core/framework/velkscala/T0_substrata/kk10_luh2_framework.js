@@ -56,9 +56,52 @@
 			} catch (e) { console.error(e); }
 	};
 	
-	//convertKK10_LUH2RastersToPopulation() - Converts greyscale KK10_LUH2 rasters to RGBA GeoPNG rasters based on average world population estimates.
-	global.convertKK10_LUH2RastersToPopulation = function () {
-	
+	//convertKK10_LUH2RastersToGeoPNG() - Converts greyscale KK10_LUH2 rasters to RGBA GeoPNG rasters based on average world population estimates.
+	global.convertKK10_LUH2RastersToGeoPNG = function () { //[WIP] - Finish function body
+		//Declare local instance variables
+		var common_defines = config.defines.common;
+		var hyde_years = config.velkscala.hyde.hyde_years;
+		var pixel_value_sum = 0; //Assuming that 1 is [255, 255, 255] and 0 is [0, 0, 0]
+		var world_pop_obj = getWorldPopulationObject();
+		
+		//Iterate over all hyde_years and check if the corresponding raster file exists
+		for (let i = 0; i < hyde_years.length; i++) {
+			var greyscale_file_path = `${common_defines.input_file_paths.kk10luh2_folder}/${common_defines.input_file_paths.kk10luh2_prefix}${hyde_years[i]}.png`;
+			var output_file_path = `${common_defines.input_file_paths.kk10luh2_geopng_folder}/${common_defines.input_file_paths.kk10luh2_prefix}${hyde_years[i]}.png`;
+			
+			if (fs.existsSync(greyscale_file_path)) {
+				var greyscale_image = loadImage(greyscale_file_path);
+				var greyscale_sum = 0;
+				var local_world_population = world_pop_obj[hyde_years[i]];
+				
+				//Iterate over all pixels in greyscale_image
+				for (let x = 0; x < greyscale_image.width; x++)
+					for (let y = 0; y < greyscale_image.height; y++) {
+						var local_index = (greyscale_image.width*y + x) << 2; //4 bytes per pixel (RGBA)
+						var r = greyscale_image.data[local_index];
+						
+						greyscale_sum += r/255;
+					}
+				
+				var population_per_pixel = local_world_population/greyscale_sum;
+				
+				//Save number raster image
+				log.info(`- Converting KK10_LUH2 from greyscale to GeoPNG for ${hyde_years[i]} ..`);
+				saveNumberRasterImage({
+					file_path: output_file_path,
+					height: greyscale_image.height,
+					width: greyscale_image.width,
+					
+					function: function (arg0_index) {
+						//Convert from parameters
+						var local_index = arg0_index;
+						
+						//Return statement
+						return (greyscale_image.data[local_index]/255)*population_per_pixel;
+					}
+				});
+			}
+		}
 	};
 
 	//generateKK10_LUH2Rasters() - Generates average rasters for both KK10 and LUH2 up to the limit of their respective domains over all HYDE years.
@@ -117,6 +160,13 @@
 				}
 			}
 		} catch (e) { console.error(e); }
+	};
+	
+	global.processKK10_LUH2Rasters = function () {
+		generateKK10_LUH2Rasters(); //1. Average greyscales from KK10/LUH2 climate models
+		convertKK10_LUH2RastersToGeoPNG(); //2. Convert greyscale images to GeoPNGs based on global population estimates
+		scaleKK10_LUH2RastersToRegional(); //3. Scale to Nelson/OWID regional estimates
+		scaleKK10_LUH2RastersToGlobal(); //4. Recalibrate to global population estimates
 	};
 
 	global.scaleKK10_LUH2RastersToGlobal = function () { //[WIP] - Finish function body

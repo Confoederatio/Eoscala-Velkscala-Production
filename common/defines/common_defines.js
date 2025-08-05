@@ -12,6 +12,7 @@ config.defines.common = {
     //Velkscala
     kk10luh2_folder: `./input/velkscala/T0_substrata/KK10LUH2/`,
     kk10luh2_prefix: `KK10LUH2_`,
+      kk10luh2_geopng_folder: `./input/velkscala/T0_substrata/KK10LUH2/KK10LUH2_geopng/`,
     mcevedy_data: `./input/velkscala/T0_substrata/mcevedy/mcevedy_data.json`,
     mcevedy_subdivisions: `./input/velkscala/T0_substrata/mcevedy/mcevedy_subdivisions.png`,
     
