@@ -72,8 +72,8 @@
 
 			if (in_luh2_domain || in_kk10_domain) {
 				//1. If this is an intersection of both the luh2_domain and kk10_domain; average rasters
-				var luh2_file_path = `${luh2_config.output_folder}${luh2_config.file_prefix}${hyde_years[i]}.png`;
-				var kk10_file_path = `${kk10_config.input_folder}${kk10_config.file_prefix}${hyde_years[i]}.png`;
+				var luh2_file_path = `${luh2_config.output_folder}/${luh2_config.file_prefix}${hyde_years[i]}.png`;
+				var kk10_file_path = `${kk10_config.input_folder}/${kk10_config.file_prefix}${hyde_years[i]}.png`;
 
 				if (in_luh2_domain && in_kk10_domain) {
 					var luh2_image = loadNumberRasterImage(luh2_file_path, { type: "greyscale" });
@@ -119,6 +119,9 @@
 	};
 
 	global.scaleKK10_LUH2RastersToRegional = function () { //[WIP] - Finish function body
+		//Declare local instance variables
+		var common_defines = config.defines.common;
+		
 		//1. Scale rasters to Nelson first
 		
 

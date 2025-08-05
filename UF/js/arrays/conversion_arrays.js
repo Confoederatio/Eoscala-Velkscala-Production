@@ -18,7 +18,7 @@
 
     //Return statement
     return return_object;
-  }
+  };
 
   /*
     objectToArray() - Casts an object to array.
@@ -40,5 +40,5 @@
 
     //Return statement
     return return_array;
-  }
+  };
 }
