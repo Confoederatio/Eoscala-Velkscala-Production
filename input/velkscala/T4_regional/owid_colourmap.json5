@@ -1,0 +1,20 @@
+{
+  "Africa": {
+    colour: [155, 101, 77]
+  },
+  "Asia": {
+    colour: [173, 62, 62]
+  },
+  "Europe": {
+    colour: [47, 97, 170]
+  },
+  "North America": {
+    colour: [87, 122, 175]
+  },
+  "Oceania": {
+    colour: [74, 137, 84]
+  },
+  "South America": {
+    colour: [109, 153, 88]
+  }
+}

@@ -17,6 +17,7 @@ config.defines.common = {
     
     nelson_data: `./input/velkscala/T4_regional/nelson_data.json5`,
     nelson_subdivisions: `./input/velkscala/T4_regional/nelson_regions.png`,
+    owid_colourmap: `./input/velkscala/T4_regional/owid_colourmap.json5`,
     owid_data: `./input/velkscala/T4_regional/owid_data.csv`,
     owid_subdivisions: `./input/velkscala/T4_regional/owid_continents.png`
   },

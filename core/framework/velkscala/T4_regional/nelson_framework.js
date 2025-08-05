@@ -102,4 +102,21 @@
 		//Return statement
 		return sortObjectKeys(nelson_obj, { type: "ascending"});
 	};
+	
+	global.scaleRasterToNelson = function (arg0_year) {
+		//Convert ffrom parameters
+		var year = parseInt(arg0_year);
+		
+		//Declare local instance variables
+		var common_defines = config.defines.common;
+		var nelson_defines = config.velkscala.nelson;
+		var nelson_obj = getNelsonPopulationObject();
+		var nelson_regions_file_path = common_defines.input_file_paths.nelson_subdivisions;
+		
+		if (year >= nelson_defines.nelson_years[0] && year <= nelson_defines.nelson_years[nelson_defines.nelson_years.length - 1]) {
+		
+		} else {
+			//Copy the
+		}
+	};
 }

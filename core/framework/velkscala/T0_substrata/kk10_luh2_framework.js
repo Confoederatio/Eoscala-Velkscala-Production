@@ -55,6 +55,11 @@
 				log.info(`- File written to ${output_file_path}.`);
 			} catch (e) { console.error(e); }
 	};
+	
+	//convertKK10_LUH2RastersToPopulation() - Converts greyscale KK10_LUH2 rasters to RGBA GeoPNG rasters based on average world population estimates.
+	global.convertKK10_LUH2RastersToPopulation = function () {
+	
+	};
 
 	//generateKK10_LUH2Rasters() - Generates average rasters for both KK10 and LUH2 up to the limit of their respective domains over all HYDE years.
 	global.generateKK10_LUH2Rasters = function () {
