@@ -197,8 +197,8 @@
 				var local_kk10luh2_image = loadNumberRasterImage(local_kk10luh2_file_path);
 				saveNumberRasterImage({
 					file_path: local_output_path,
-					height: 4320,
-					width: 2160,
+					height: 2160,
+					width: 4320,
 					
 					function: function (arg0_index) {
 						//Convert from parameters
