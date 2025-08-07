@@ -10,6 +10,7 @@ config.defines.common = {
     world_bank_subdivisions: `./input/eoscala/world_bank/world_bank_subdivisions.png`,
 
     //Velkscala
+    hyde_outlier_mask_folder: `./input/velkscala/T0_substrata/hyde_outlier_masks/`,
     kk10luh2_folder: `./input/velkscala/T0_substrata/KK10LUH2/`,
     kk10luh2_prefix: `KK10LUH2_`,
       kk10luh2_geopng_folder: `./input/velkscala/T0_substrata/KK10LUH2/KK10LUH2_geopng/`,
