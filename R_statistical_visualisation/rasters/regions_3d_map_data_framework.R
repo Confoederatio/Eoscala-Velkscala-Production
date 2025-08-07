@@ -156,7 +156,7 @@ generate_region_3d_map <- function(data_png_path, region_key, options = list()) 
       if (mask[i, j] == 1L) {
         neighbor_avg <- get_neighbor_avg(heightmap, i, j, height, width)
         if (!is.na(neighbor_avg) && neighbor_avg > 0 &&
-            heightmap[i, j] > 8*neighbor_avg) { # Remove outliers 100x greater than the average of its neighbours
+            heightmap[i, j] > 8*neighbor_avg) { # Remove outliers 8x greater than the average of its neighbours
           filtered_heightmap[i, j] <- neighbor_avg
           outlier_count <- outlier_count + 1
         }

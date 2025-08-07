@@ -1,37 +1,19 @@
 //Initialise functions
 {
-	global.getRasterNeighbourAverage = function (arg0_geopng_array, arg1_x, arg2_y, arg3_height, arg4_width) {
-		//Convert from parameters
-		var geopng_array = arg0_geopng_array;
-		var local_x = arg1_x;
-		var local_y = arg2_y;
-		var height = arg3_height;
-		var width = arg4_width;
+	global.checkSubstrataPopulations = function () {
+		var common_defines = config.defines.common;
+		var hyde_years = config.velkscala.hyde.hyde_years;
+		var world_pop_obj = getWorldPopulationObject();
 		
-		//Declare local instance variables
-		var count = 0;
-		var sum = 0;
-		
-		for (let i = -1; i <= 1; i++)
-			for (let x = -1; x <= 1; x++) {
-				if (i == 0 && x == 0) continue;
-				
-				let neighbour_x = local_x + i;
-				let neighbour_y = local_y + x;
-				
-				if (neighbour_x >= 0 && neighbour_x < height && neighbour_y >= 0 && neighbour_y < width) {
-					let local_index = neighbour_x*width + neighbour_y;
-					let local_value = geopng_array[local_index];
-					
-					if (!isNaN(local_value)) {
-						sum += local_value;
-						count++;
-					}
-				}
-			}
-		
-		//Return statement
-		return (count > 0) ? sum/count : NaN;
+		//Iterate over all hyde_years and check population
+		for (let i = 0; i < hyde_years.length; i++) {
+			var local_input_file_path = `${common_defines.input_file_paths.processed_substrata_folder}${common_defines.input_file_paths.processed_substrata_prefix}_${getHYDEYearName(hyde_years[i])}_number.png`;
+			var local_population = getImageSum(local_input_file_path);
+			var local_world_population = world_pop_obj[hyde_years[i]];
+			
+			//Log actual world population vs. model population
+			log.info(`- ${getHYDEYearName(hyde_years[i])} - World Population: ${parseNumber(local_world_population)}, Model Population: ${parseNumber(local_population)}`);
+		}
 	};
 	
 	/**
@@ -46,7 +28,7 @@
 	 *   }
 	 * }}
 	 */
-	global.getHYDEOutlierMasksObject = function () { //[WIP] - Finish function body
+	global.getHYDEOutlierMasksObject = function () {
 		//Declare local instance variables
 		var common_defines = config.defines.common;
 		var hyde_outlier_folder = common_defines.input_file_paths.hyde_outlier_mask_folder;
@@ -84,7 +66,41 @@
 		return return_obj;
 	};
 	
-	global.removeOutliersForHYDE = function () { //[WIP] - Finish function body
+	global.getRasterNeighbourAverage = function (arg0_geopng_array, arg1_x, arg2_y, arg3_height, arg4_width) {
+		//Convert from parameters
+		var geopng_array = arg0_geopng_array;
+		var local_x = arg1_x;
+		var local_y = arg2_y;
+		var height = arg3_height;
+		var width = arg4_width;
+		
+		//Declare local instance variables
+		var count = 0;
+		var sum = 0;
+		
+		for (let i = -1; i <= 1; i++)
+			for (let x = -1; x <= 1; x++) {
+				if (i == 0 && x == 0) continue;
+				
+				let neighbour_x = local_x + i;
+				let neighbour_y = local_y + x;
+				
+				if (neighbour_x >= 0 && neighbour_x < height && neighbour_y >= 0 && neighbour_y < width) {
+					let local_index = neighbour_x*width + neighbour_y;
+					let local_value = geopng_array[local_index];
+					
+					if (!isNaN(local_value)) {
+						sum += local_value;
+						count++;
+					}
+				}
+			}
+		
+		//Return statement
+		return (count > 0) ? sum/count : NaN;
+	};
+	
+	global.removeOutliersForHYDE = function () {
 		//Declare local instance variables
 		var hyde_years = config.velkscala.hyde.hyde_years;
 		
@@ -95,7 +111,7 @@
 		} catch (e) { console.error(e); }
 	}
 	
-	global.removeOutliersForHYDEYear = function (arg0_year) { //[WIP] - Finish function body
+	global.removeOutliersForHYDEYear = function (arg0_year) {
 		//Convert from parameters
 		var year = arg0_year;
 		
@@ -132,6 +148,9 @@
 				if (!isNaN(neighbour_average) && neighbour_average > 0 && hyde_raster.data[local_index] > 8*neighbour_average)
 					hyde_pixel_outliers.push(local_index);
 			}
+		
+		//Log outlier numbers
+		log.info(` - Outliers detected:`, hyde_pixel_outliers.length);
 		
 		//Save number raster image
 		saveNumberRasterImage({
@@ -176,5 +195,43 @@
 				}
 			}
 		});
-	}
+	};
+	
+	global.scaleProcessedHYDEToGlobal = function () {
+		//Declare local instance variables
+		var common_defines = config.defines.common;
+		var hyde_years = config.velkscala.hyde.hyde_years;
+		var world_pop_obj = getWorldPopulationObject();
+		
+		//Iterate over all hyde_years and scale the corresponding raster to the global mean
+		for (let i = 0; i < hyde_years.length; i++) {
+			var local_hyde_file_path = `${common_defines.input_file_paths.hyde_outliers_processed}pop_${getHYDEYearName(hyde_years[i])}_number.png`;
+			var local_output_path = `${common_defines.input_file_paths.processed_substrata_folder}${common_defines.input_file_paths.processed_substrata_prefix}_${getHYDEYearName(hyde_years[i])}_number.png`;
+			var local_world_population = world_pop_obj[hyde_years[i]];
+			
+			if (fs.existsSync(local_hyde_file_path)) {
+				//Fetch current image sum
+				var local_hyde_sum = getImageSum(local_hyde_file_path);
+				var local_scalar = local_world_population/local_hyde_sum;
+				
+				//Multiply raster by local scalar and output it
+				log.info(`- Multiplying corrected HYDE Raster for ${hyde_years[i]} (x${local_scalar}) ..`);
+				
+				var local_hyde_image = loadNumberRasterImage(local_hyde_file_path);
+				saveNumberRasterImage({
+					file_path: local_output_path,
+					height: 2160,
+					width: 4320,
+					
+					function: function (arg0_index) {
+						//Convert from parameters
+						var local_index = arg0_index;
+						
+						//Return statement
+						return Math.ceil(local_hyde_image.data[local_index]*local_scalar);
+					}
+				});
+			}
+		}
+	};
 }

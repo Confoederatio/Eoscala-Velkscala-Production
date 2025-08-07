@@ -20,6 +20,8 @@ config.defines.common = {
       kk10luh2_processed_folder: `./input/velkscala/T0_substrata/KK10LUH2/KK10LUH2_processed/`,
     mcevedy_data: `./input/velkscala/T0_substrata/mcevedy/mcevedy_data.json`,
     mcevedy_subdivisions: `./input/velkscala/T0_substrata/mcevedy/mcevedy_subdivisions.png`,
+    processed_substrata_folder: `./input/velkscala/T0_substrata/processed_substrata/`,
+      processed_substrata_prefix: `substrata_pop_`,
     
     nelson_data: `./input/velkscala/T4_regional/nelson_data.json5`,
     nelson_subdivisions: `./input/velkscala/T4_regional/nelson_regions.png`,
