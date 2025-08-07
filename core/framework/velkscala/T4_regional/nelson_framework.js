@@ -74,6 +74,9 @@
 		for (var i = 0; i < all_regions_keys.length; i++) try {
 			var local_region = nelson_obj.regions[all_regions_keys[i]];
 			
+			//Set local_region.key
+			local_region.key = all_regions_keys[i];
+			
 			//Iterate over all_population_keys
 			var all_population_keys = Object.keys(local_region.population);
 			

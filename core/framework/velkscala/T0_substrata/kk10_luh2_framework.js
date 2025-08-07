@@ -57,11 +57,10 @@
 	};
 	
 	//convertKK10_LUH2RastersToGeoPNG() - Converts greyscale KK10_LUH2 rasters to RGBA GeoPNG rasters based on average world population estimates.
-	global.convertKK10_LUH2RastersToGeoPNG = function () { //[WIP] - Finish function body
+	global.convertKK10_LUH2RastersToGeoPNG = function () {
 		//Declare local instance variables
 		var common_defines = config.defines.common;
 		var hyde_years = config.velkscala.hyde.hyde_years;
-		var pixel_value_sum = 0; //Assuming that 1 is [255, 255, 255] and 0 is [0, 0, 0]
 		var world_pop_obj = getWorldPopulationObject();
 		
 		//Iterate over all hyde_years and check if the corresponding raster file exists
@@ -175,19 +174,189 @@
 		scaleKK10_LUH2RastersToGlobal(); //4. Recalibrate to global population estimates
 	};
 
-	global.scaleKK10_LUH2RastersToGlobal = function () { //[WIP] - Finish function body
-
+	global.scaleKK10_LUH2RastersToGlobal = function () {
+		//Declare local instance variables
+		var common_defines = config.defines.common;
+		var hyde_years = config.velkscala.hyde.hyde_years;
+		var world_pop_obj = getWorldPopulationObject();
+		
+		//Iterate over all hyde_years and scale the corresponding raster to the global mean
+		for (let i = 0; i < hyde_years.length; i++) {
+			var local_kk10luh2_file_path = `${common_defines.input_file_paths.kk10luh2_owid_folder}/${common_defines.input_file_paths.kk10luh2_prefix}owid_${hyde_years[i]}.png`;
+			var local_output_path = `${common_defines.input_file_paths.kk10luh2_processed_folder}/${common_defines.input_file_paths.kk10luh2_prefix}processed_${hyde_years[i]}.png`;
+			var local_world_population = world_pop_obj[hyde_years[i]];
+			
+			if (fs.existsSync(local_kk10luh2_file_path)) {
+				//Fetch current image sum
+				var local_kk10luh2_sum = getImageSum(local_kk10luh2_file_path);
+				var local_scalar = local_kk10luh2_sum/local_world_population;
+				
+				//Multiply raster by local_scalar and output it
+				log.info(`- Multiplying KK10_LUH2 Raster for ${hyde_years[i]} ..`);
+				
+				var local_kk10luh2_image = loadNumberRasterImage(local_kk10luh2_file_path);
+				saveNumberRasterImage({
+					file_path: local_output_path,
+					height: 4320,
+					width: 2160,
+					
+					function: function (arg0_index) {
+						//Convert from parameters
+						var local_index = arg0_index;
+						
+						//Return statement
+						return Math.round(local_kk10luh2_image.data[local_index]*local_scalar);
+					}
+				});
+			}
+		}
 	};
 
 	global.scaleKK10_LUH2RastersToRegional = function () { //[WIP] - Finish function body
 		//Declare local instance variables
 		var common_defines = config.defines.common;
 		var hyde_years = config.velkscala.hyde.hyde_years;
+		var nelson_obj = getNelsonPopulationObject();
+		var owid_obj = getOWIDRegionsObject();
 		
+		//Load in nelson_raster, owid_raster for reference
+		var nelson_raster = loadImage(common_defines.input_file_paths.nelson_subdivisions);
+		var owid_raster = loadImage(common_defines.input_file_paths.owid_subdivisions);
 		
-		//1. Scale rasters to Nelson first
-		
+		//1. Scale rasters to Nelson first; if transparent, set value to zero
+		for (let i = 0; i < hyde_years.length; i++) {
+			var local_input_file_path = `${common_defines.input_file_paths.kk10luh2_geopng_folder}/${common_defines.input_file_paths.kk10luh2_prefix}${hyde_years[i]}.png`;
+			var local_input_raster = loadNumberRasterImage(local_input_file_path);
+			var local_output_file_path = `${common_defines.input_file_paths.kk10luh2_nelson_folder}/${common_defines.input_file_paths.kk10luh2_prefix}nelson_${hyde_years[i]}.png`;
+			
+			//Adjust raster image to Nelson
+			log.info(`- Standardising to Nelson for ${hyde_years[i]} ..`);
+			if (fs.existsSync(local_input_file_path)) {
+				var all_nelson_regions = Object.keys(nelson_obj);
+				var local_nelson_obj = {};
+				var local_nelson_scalars = {};
+				
+				//Populate local_nelson_obj
+				operateNumberRasterImage({
+					file_path: local_input_file_path,
+					function: function (arg0_index, arg1_number) {
+						//Convert from parameters
+						var index = arg0_index;
+						var number = arg1_number;
+						
+						//Declare local instance variables
+						var byte_index = index*4;
+						var local_region = Object.values(nelson_obj).find((local_obj) => (local_obj.colour.join(",") == [
+							nelson_raster.data[byte_index],
+							nelson_raster.data[byte_index + 1],
+							nelson_raster.data[byte_index + 2]
+						].join(",")));
+						
+						if (local_region) modifyValue(local_nelson_obj, local_region.key, number);
+					}
+				});
+				
+				//Iterate over all_nelson_regions; populate local_nelson_scalars
+				for (let x = 0; x < all_nelson_regions.length; x++)
+					local_nelson_scalars[all_nelson_regions[x]] = local_nelson_obj[all_nelson_regions[x]]/nelson_obj[all_nelson_regions[x]];
+				
+				saveNumberRasterImage({
+					file_path: local_output_file_path,
+					height: nelson_raster.height,
+					width: nelson_raster.width,
+					function: function (arg0_index) {
+						//Convert from parameters
+						var index = arg0_index;
+						
+						//Declare local instance variables
+						var byte_index = index*4;
+						var local_region = Object.values(nelson_obj).find((local_obj) => (local_obj.colour.join(",") == [
+							nelson_raster.data[byte_index],
+							nelson_raster.data[byte_index + 1],
+							nelson_raster.data[byte_index + 2]
+						].join(",")));
+						var local_value = local_input_raster.data[index];
+						
+						//Adjust to Nelson if possible
+						if (local_region) {
+							local_value *= local_nelson_scalars[local_region.key];
+						} else {
+							local_value = 0;
+						}
+						
+						//Return statement
+						return local_value;
+					}
+				});
+			}
+		}
 
 		//2. Scale rasters to OWID/HYDE second
+		for (let i = 0; i < hyde_years.length; i++) {
+			var local_input_file_path = `${common_defines.input_file_paths.kk10luh2_nelson_folder}/${common_defines.input_file_paths.kk10luh2_prefix}nelson_${hyde_years[i]}.png`;
+			var local_input_raster = loadNumberRasterImage(local_input_file_path);
+			var local_output_file_path = `${common_defines.input_file_paths.kk10luh2_owid_folder}/${common_defines.input_file_paths.kk10luh2_prefix}owid_${hyde_years[i]}.png`;
+			
+			//Adjust raster image to OWID/HYDE
+			log.info(`- Standardising to OWID/HYDE for ${hyde_years[i]} ..`);
+			if (fs.existsSync(local_input_file_path)) {
+				var all_owid_regions = Object.keys(owid_obj);
+				var local_owid_obj = {};
+				var local_owid_scalars = {};
+				
+				//Populste local_owid_obj
+				operateNumberRasterImage({
+					file_path: local_input_file_path,
+					function: function (arg0_index, arg1_number) {
+						//Convert from parameters
+						var index = arg0_index;
+						var number = arg1_number;
+						
+						//Declare local instance variables
+						var byte_index = index*4;
+						var local_region = Object.values(owid_obj).find((local_obj) => (local_obj.colour.join(",") == [
+							owid_raster.data[byte_index],
+							owid_raster.data[byte_index + 1],
+							owid_raster.data[byte_index + 2]
+						].join(",")));
+						
+						if (local_region) modifyValue(local_owid_obj, local_region.key, number);
+					}
+				});
+				
+				//Iterate over all_owid_regions, populate local_owid_scalars
+				for (let x = 0; x < all_owid_regions.length; x++)
+					local_owid_scalars[all_owid_regions[x]] = local_owid_obj[all_owid_regions[x]]/owid_obj[all_owid_regions[x]];
+				
+				saveNumberRasterImage({
+					file_path: local_output_file_path,
+					height: owid_raster.height,
+					width: owid_raster.width,
+					function: function (arg0_index) {
+						//Convert from parameters
+						var index = arg0_index;
+						
+						//Declare local instance variables
+						var byte_index = index*4;
+						var local_region = Object.values(owid_obj).find((local_obj) => (local_obj.colour.join(",") == [
+							owid_raster.data[byte_index],
+							owid_raster.data[byte_index + 1],
+							owid_raster.data[byte_index + 2]
+						].join(",")));
+						var local_value = local_input_raster.data[index];
+						
+						//Adjust to OWID if possible
+						if (local_region) {
+							local_value *= local_owid_scalars[local_region.key];
+						} else {
+							local_value = 0;
+						}
+						
+						//Return statement
+						return local_value;
+					}
+				});
+			}
+		}
 	};
 }

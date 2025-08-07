@@ -23,6 +23,9 @@
 			local_region["Year"] = local_region["Year"].map(Number);
 			local_region["Population (historical)"] = local_region["Population (historical)"].map(Number);
 			
+			//Set local_region.key
+			local_region.key = all_regions[i];
+			
 			if (owid_colourmap[all_regions[i]])
 				local_region.colour = owid_colourmap[all_regions[i]].colour;
 		}
