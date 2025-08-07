@@ -1,5 +1,39 @@
 //Initialise functions
 {
+	global.getRasterNeighbourAverage = function (arg0_geopng_array, arg1_x, arg2_y, arg3_height, arg4_width) {
+		//Convert from parameters
+		var geopng_array = arg0_geopng_array;
+		var local_x = arg1_x;
+		var local_y = arg2_y;
+		var height = arg3_height;
+		var width = arg4_width;
+		
+		//Declare local instance variables
+		var count = 0;
+		var sum = 0;
+		
+		for (let i = -1; i <= 1; i++)
+			for (let x = -1; x <= 1; x++) {
+				if (i == 0 && x == 0) continue;
+				
+				let neighbour_x = local_x + i;
+				let neighbour_y = local_y + x;
+				
+				if (neighbour_x >= 0 && neighbour_x < height && neighbour_y >= 0 && neighbour_y < width) {
+					let local_index = neighbour_x*width + neighbour_y;
+					let local_value = geopng_array[local_index];
+					
+					if (!isNaN(local_value)) {
+						sum += local_value;
+						count++;
+					}
+				}
+			}
+		
+		//Return statement
+		return (count > 0) ? sum/count : NaN;
+	};
+	
 	/**
 	 * Returns a list of all HYDE outlier mask files and their time domains.
 	 *
@@ -55,6 +89,83 @@
 	}
 	
 	global.removeOutliersForHYDEYear = function (arg0_year) { //[WIP] - Finish function body
-	
+		//Convert from parameters
+		var year = arg0_year;
+		
+		//Declare local instance variables
+		var common_defines = config.defines.common;
+		var fallback_file_path = `${common_defines.input_file_paths.kk10luh2_processed_folder}/${common_defines.input_file_paths.kk10luh2_prefix}processed_${year}.png`;
+		var fallback_raster = loadNumberRasterImage(fallback_file_path);
+		var hyde_input_file_path = `${common_defines.output_file_paths.hyde_folder}popc_${getHYDEYearName(year)}_number.png`;
+		var hyde_output_file_path = `${common_defines.output_file_paths.hyde_outliers_processed}pop_${getHYDEYearName(year)}_number.png`;
+		var hyde_outlier_masks = getHYDEOutlierMasksObject();
+		var hyde_outlier_rasters = {};
+		var hyde_pixel_outliers = []; //Indices detected as being outliers
+		var hyde_raster = loadNumberRasterImage(hyde_input_file_path);
+		
+		//Iterate over all_hyde_outlier_masks; load hyde_outlier_rasters
+		var all_hyde_outlier_masks = Object.keys(hyde_outlier_masks);
+		
+		for (let i = 0; i < all_hyde_outlier_masks.length; i++) {
+			var local_outlier = hyde_outlier_masks[all_hyde_outlier_masks[i]];
+			
+			if (year >= local_outlier.start_year && year <= local_outlier.end_year)
+				hyde_outlier_rasters[all_hyde_outlier_masks[i]] = loadImage(all_hyde_outlier_masks[i]);
+		}
+		
+		//Operate over current image; check if number is an outlier compared to neighbouring pixels
+		var outlier_count = 0;
+		
+		for (let i = 0; i < hyde_raster.height; i++)
+			for (let x = 0; x < hyde_raster.width; x++) {
+				let local_index = x*hyde_raster.width + i;
+				let neighbour_average = getRasterNeighbourAverage(hyde_raster.data, i, x, hyde_raster.height, hyde_raster.width);
+				
+				if (!isNaN(neighbour_average) && neighbour_average > 0 && hyde_raster.data[local_index] > 8*neighbour_average)
+					hyde_pixel_outliers.push(local_index);
+			}
+		
+		//Save number raster image
+		saveNumberRasterImage({
+			file_path: hyde_output_file_path,
+			height: hyde_raster.height,
+			width: hyde_raster.width,
+			function: function (arg0_index) {
+				//Convert from parameters
+				var index = arg0_index;
+				
+				//Declare local instance variables
+				var byte_index = index*4;
+				var is_outlier = (hyde_pixel_outliers.includes(index));
+				
+				//Check if any of hyde_outlier_rasters contains [0, 0, 0] masking for this pixel
+				if (!is_outlier) {
+					var all_hyde_outlier_rasters = Object.keys(hyde_outlier_rasters);
+					
+					for (let i = 0; i < all_hyde_outlier_rasters.length; i++) {
+						var local_raster = hyde_outlier_rasters[all_hyde_outlier_rasters[i]];
+						var local_raster_colour = [
+							local_raster.data[byte_index],
+							local_raster.data[byte_index + 1],
+							local_raster.data[byte_index + 2]
+						].join(",");
+						
+						//Break if outlier is detected
+						if (local_raster == "0,0,0") {
+							is_outlier = true;
+							break;
+						}
+					}
+				}
+				
+				//If this pixel is an outlier, overwrite it with the equivalent content in fallback_image
+				//Return statement
+				if (is_outlier) {
+					return fallback_raster.data[index];
+				} else {
+					return hyde_raster.data[index];
+				}
+			}
+		});
 	}
 }

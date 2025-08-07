@@ -11,6 +11,7 @@ config.defines.common = {
 
     //Velkscala
     hyde_outlier_mask_folder: `./input/velkscala/T0_substrata/hyde_outlier_masks/`,
+    hyde_outliers_processed: `./input/velkscala/T0_substrata/hyde_outliers_processed/`,
     kk10luh2_folder: `./input/velkscala/T0_substrata/KK10LUH2/`,
     kk10luh2_prefix: `KK10LUH2_`,
       kk10luh2_geopng_folder: `./input/velkscala/T0_substrata/KK10LUH2/KK10LUH2_geopng/`,
