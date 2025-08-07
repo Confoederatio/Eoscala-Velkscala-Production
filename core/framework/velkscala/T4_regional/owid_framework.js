@@ -28,6 +28,8 @@
 			
 			if (owid_colourmap[all_regions[i]])
 				local_region.colour = owid_colourmap[all_regions[i]].colour;
+			if (local_region.colour)
+				owid_obj[local_region.colour.join(",")] = local_region;
 		}
 		
 		//Return statement

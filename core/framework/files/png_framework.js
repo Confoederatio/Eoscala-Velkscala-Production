@@ -131,6 +131,10 @@
   global.operateNumberRasterImage = function (arg0_options) {
     //Convert from parameters
     var options = (arg0_options) ? arg0_options : {};
+    
+    //Internal guard clause
+    if (!fs.existsSync(options.file_path))
+      console.error(`${options.file_path} does not exist. Double check pathing.`);
 
     //Declare local instance variables
     var image_obj = loadNumberRasterImage(options.file_path);

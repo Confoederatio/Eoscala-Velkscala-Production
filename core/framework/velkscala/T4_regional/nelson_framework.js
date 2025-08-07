@@ -101,6 +101,13 @@
 			});
 			local_region.population = sortObjectKeys(local_region.population);
 		}
+		
+		//3. Set colourmap
+		for (let i = 0; i < all_regions_keys.length; i++) {
+			var local_region = nelson_obj.regions[all_regions_keys[i]];
+			
+			nelson_obj.regions[local_region.colour.join(",")] = local_region;
+		}
 
 		//Return statement
 		return sortObjectKeys(nelson_obj, { type: "ascending"});

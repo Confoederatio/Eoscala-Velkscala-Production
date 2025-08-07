@@ -216,26 +216,14 @@
 		//Declare local instance variables
 		var common_defines = config.defines.common;
 		var hyde_years = config.velkscala.hyde.hyde_years;
-		var nelson_obj = getNelsonPopulationObject().regions;
-			var all_nelson_regions = Object.keys(nelson_obj);
-			
-			for (let i = 0; i < all_nelson_regions.length; i++) {
-				var local_region = nelson_obj[all_nelson_regions[i]];
-				
-				nelson_obj[local_region.colour.join(",")] = local_region;
-			}
+		var nelson_obj = getNelsonPopulationObject();
 		var owid_obj = getOWIDRegionsObject();
-			var all_owid_regions = Object.keys(owid_obj);
-			
-			for (let i = 0; i < all_owid_regions.length; i++) {
-				var local_region = owid_obj[all_owid_regions[i]];
-				
-				owid_obj[local_region.colour.join(", ")] = local_region;
-			}
 		
 		//Load in nelson_raster, owid_raster for reference
+		var all_nelson_regions = Object.keys(nelson_obj.regions);
 		var nelson_raster = loadImage(common_defines.input_file_paths.nelson_subdivisions);
 		var owid_raster = loadImage(common_defines.input_file_paths.owid_subdivisions);
+		var all_owid_regions = Object.keys(owid_obj);
 		
 		//1. Scale rasters to Nelson first; if transparent, set value to zero
 		for (let i = 0; i < hyde_years.length; i++) {
@@ -250,6 +238,7 @@
 				var local_nelson_scalars = {};
 				
 				//Populate local_nelson_obj
+				console.log(local_input_file_path);
 				operateNumberRasterImage({
 					file_path: local_input_file_path,
 					function: function (arg0_index, arg1_number) {
@@ -257,23 +246,27 @@
 						var index = arg0_index;
 						var number = arg1_number;
 						
-						//Declare local instance variables
-						var byte_index = index*4;
-						var local_region = nelson_obj[[
-							nelson_raster.data[byte_index],
-							nelson_raster.data[byte_index + 1],
-							nelson_raster.data[byte_index + 2]
-						].join(",")];
+						//Declare local instance variables;
+						var local_colour_key = [
+							nelson_raster.data[index],
+							nelson_raster.data[index + 1],
+							nelson_raster.data[index + 2]
+						].join(",");
+						var local_region = nelson_obj.regions[local_colour_key];
 						
-						if (local_region) modifyValue(local_nelson_obj, local_region.key, number);
+						if (local_region) modifyValue(local_nelson_obj, local_colour_key, number);
 					}
 				});
 				
 				//Iterate over all_nelson_regions; populate local_nelson_scalars
 				for (let x = 0; x < all_nelson_regions.length; x++) {
-					var local_region = nelson_obj[all_nelson_regions[x]];
+					var local_region = nelson_obj.regions[all_nelson_regions[x]];
 					
-					local_nelson_scalars[all_nelson_regions[x]] = local_nelson_obj[all_nelson_regions[x]]/nelson_obj[all_nelson_regions[x]].population[hyde_years[i]];
+					//console.log(nelson_obj.regions, all_nelson_regions[x], local_region);
+					var local_population = local_region.population[hyde_years[i]];
+					var local_value = local_nelson_obj[local_region.colour.join(",")];
+					
+					local_nelson_scalars[local_region.colour.join(",")] = local_value/local_population;
 				}
 				
 				log.info(` - Local Nelson object:`, local_nelson_obj);
@@ -289,16 +282,17 @@
 						
 						//Declare local instance variables
 						var byte_index = index*4;
-						var local_region = nelson_obj[[
+						var local_colour_key = [
 							nelson_raster.data[byte_index],
 							nelson_raster.data[byte_index + 1],
 							nelson_raster.data[byte_index + 2]
-						]];
+						].join(",");
+						var local_region = nelson_obj.regions[local_colour_key];
 						var local_value = local_input_raster.data[index];
 						
 						//Adjust to Nelson if possible
 						if (local_region) {
-							local_value *= local_nelson_scalars[local_region.key];
+							local_value *= local_nelson_scalars[local_colour_key];
 						} else {
 							local_value = 0;
 						}
@@ -332,13 +326,14 @@
 						
 						//Declare local instance variables
 						var byte_index = index*4;
-						var local_region = owid_obj[[
+						var local_colour_key = [
 							owid_raster.data[byte_index],
 							owid_raster.data[byte_index + 1],
 							owid_raster.data[byte_index + 2]
-						].join(",")];
+						].join(",");
+						var local_region = owid_obj[local_colour_key];
 						
-						if (local_region) modifyValue(local_owid_obj, local_region.key, number);
+						if (local_region) modifyValue(local_owid_obj, local_colour_key, number);
 					}
 				});
 				
@@ -357,16 +352,17 @@
 						
 						//Declare local instance variables
 						var byte_index = index*4;
-						var local_region = owid_obj[[
+						var local_colour_key = [
 							owid_raster.data[byte_index],
 							owid_raster.data[byte_index + 1],
 							owid_raster.data[byte_index + 2]
-						].join(",")];
+						].join(",");
+						var local_region = owid_obj[local_colour_key];
 						var local_value = local_input_raster.data[index];
 						
 						//Adjust to OWID if possible
 						if (local_region) {
-							local_value *= local_owid_scalars[local_region.key];
+							local_value *= local_owid_scalars[local_colour_key];
 						} else {
 							local_value = 0;
 						}
