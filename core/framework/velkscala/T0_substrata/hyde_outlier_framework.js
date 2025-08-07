@@ -85,7 +85,14 @@
 	};
 	
 	global.removeOutliersForHYDE = function () { //[WIP] - Finish function body
-	
+		//Declare local instance variables
+		var hyde_years = config.velkscala.hyde.hyde_years;
+		
+		//Iterate over all hyde_years
+		for (let i = 0; i < hyde_years.length; i++) try {
+			log.info(`- Removing HYDE outliers for ${getHYDEYearName(hyde_years[i])} ..`);
+			removeOutliersForHYDEYear(hyde_years[i]);
+		} catch (e) { console.error(e); }
 	}
 	
 	global.removeOutliersForHYDEYear = function (arg0_year) { //[WIP] - Finish function body
@@ -97,7 +104,7 @@
 		var fallback_file_path = `${common_defines.input_file_paths.kk10luh2_processed_folder}/${common_defines.input_file_paths.kk10luh2_prefix}processed_${year}.png`;
 		var fallback_raster = loadNumberRasterImage(fallback_file_path);
 		var hyde_input_file_path = `${common_defines.output_file_paths.hyde_folder}popc_${getHYDEYearName(year)}_number.png`;
-		var hyde_output_file_path = `${common_defines.output_file_paths.hyde_outliers_processed}pop_${getHYDEYearName(year)}_number.png`;
+		var hyde_output_file_path = `${common_defines.input_file_paths.hyde_outliers_processed}pop_${getHYDEYearName(year)}_number.png`;
 		var hyde_outlier_masks = getHYDEOutlierMasksObject();
 		var hyde_outlier_rasters = {};
 		var hyde_pixel_outliers = []; //Indices detected as being outliers
@@ -148,11 +155,12 @@
 						var local_raster_colour = [
 							local_raster.data[byte_index],
 							local_raster.data[byte_index + 1],
-							local_raster.data[byte_index + 2]
+							local_raster.data[byte_index + 2],
+							local_raster.data[byte_index + 3]
 						].join(",");
 						
 						//Break if outlier is detected
-						if (local_raster_colour == "0,0,0") {
+						if (local_raster_colour == "0,0,0,255") {
 							is_outlier = true;
 							break;
 						}
