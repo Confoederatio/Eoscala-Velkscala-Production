@@ -116,9 +116,10 @@
 		//Operate over current image; check if number is an outlier compared to neighbouring pixels
 		var outlier_count = 0;
 		
-		for (let i = 0; i < hyde_raster.height; i++)
-			for (let x = 0; x < hyde_raster.width; x++) {
-				let local_index = x*hyde_raster.width + i;
+		//Iterate over all pixels in hyde_raster, excluding border pixels
+		for (let i = 1; i < hyde_raster.height - 1; i++)
+			for (let x = 1; x < hyde_raster.width - 1; x++) {
+				let local_index = i*hyde_raster.width + x;
 				let neighbour_average = getRasterNeighbourAverage(hyde_raster.data, i, x, hyde_raster.height, hyde_raster.width);
 				
 				if (!isNaN(neighbour_average) && neighbour_average > 0 && hyde_raster.data[local_index] > 8*neighbour_average)
@@ -151,7 +152,7 @@
 						].join(",");
 						
 						//Break if outlier is detected
-						if (local_raster == "0,0,0") {
+						if (local_raster_colour == "0,0,0") {
 							is_outlier = true;
 							break;
 						}
