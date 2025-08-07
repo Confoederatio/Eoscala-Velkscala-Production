@@ -189,7 +189,7 @@
 			if (fs.existsSync(local_kk10luh2_file_path)) {
 				//Fetch current image sum
 				var local_kk10luh2_sum = getImageSum(local_kk10luh2_file_path);
-				var local_scalar = local_kk10luh2_sum/local_world_population;
+				var local_scalar = local_world_population/local_kk10luh2_sum;
 				
 				//Multiply raster by local_scalar and output it
 				log.info(`- Multiplying KK10_LUH2 Raster for ${hyde_years[i]} ..`);
