@@ -212,7 +212,13 @@
 		}
 	};
 
-	global.scaleKK10_LUH2RastersToRegional = function () { //[WIP] - Finish function body
+	global.scaleKK10_LUH2RastersToRegional = function (arg0_options) {
+		//Convert from parameters
+		var options = (arg0_options) ? arg0_options : {};
+		
+		//Initialise options
+		if (!options.process_datasets) options.process_datasets = ["nelson", "owid"];
+		
 		//Declare local instance variables
 		var common_defines = config.defines.common;
 		var hyde_years = config.velkscala.hyde.hyde_years;
@@ -226,7 +232,8 @@
 		var all_owid_regions = Object.keys(owid_obj);
 		
 		//1. Scale rasters to Nelson first; if transparent, set value to zero
-		for (let i = 0; i < hyde_years.length; i++) {
+		if (options.process_datasets.includes("nelson"))
+			for (let i = 0; i < hyde_years.length; i++) {
 			var local_input_file_path = `${common_defines.input_file_paths.kk10luh2_geopng_folder}/${common_defines.input_file_paths.kk10luh2_prefix}${hyde_years[i]}.png`;
 			var local_input_raster = loadNumberRasterImage(local_input_file_path);
 			var local_output_file_path = `${common_defines.input_file_paths.kk10luh2_nelson_folder}/${common_defines.input_file_paths.kk10luh2_prefix}nelson_${hyde_years[i]}.png`;
@@ -266,7 +273,7 @@
 					var local_population = local_region.population[hyde_years[i]];
 					var local_value = local_nelson_obj[local_region.colour.join(",")];
 					
-					local_nelson_scalars[local_region.colour.join(",")] = local_value/local_population;
+					local_nelson_scalars[local_region.colour.join(",")] = returnSafeNumber(local_value/local_population, 1); //Set to 1 for safety if out of domain
 				}
 				
 				log.info(` - Local Nelson object:`, local_nelson_obj);
@@ -305,7 +312,8 @@
 		}
 
 		//2. Scale rasters to OWID/HYDE second
-		for (let i = 0; i < hyde_years.length; i++) {
+		if (options.process_datasets.includes("owid"))
+			for (let i = 0; i < hyde_years.length; i++) {
 			var local_input_file_path = `${common_defines.input_file_paths.kk10luh2_nelson_folder}/${common_defines.input_file_paths.kk10luh2_prefix}nelson_${hyde_years[i]}.png`;
 			var local_input_raster = loadNumberRasterImage(local_input_file_path);
 			var local_output_file_path = `${common_defines.input_file_paths.kk10luh2_owid_folder}/${common_defines.input_file_paths.kk10luh2_prefix}owid_${hyde_years[i]}.png`;
@@ -325,11 +333,10 @@
 						var number = arg1_number;
 						
 						//Declare local instance variables
-						var byte_index = index*4;
 						var local_colour_key = [
-							owid_raster.data[byte_index],
-							owid_raster.data[byte_index + 1],
-							owid_raster.data[byte_index + 2]
+							owid_raster.data[index],
+							owid_raster.data[index + 1],
+							owid_raster.data[index + 2]
 						].join(",");
 						var local_region = owid_obj[local_colour_key];
 						
@@ -338,9 +345,16 @@
 				});
 				
 				//Iterate over all_owid_regions, populate local_owid_scalars
-				for (let x = 0; x < all_owid_regions.length; x++)
-					local_owid_scalars[all_owid_regions[x]] = local_owid_obj[all_owid_regions[x]]
-						/owid_obj[all_owid_regions[x]]["Population (historical)"][hyde_years[i]];
+				for (let x = 0; x < all_owid_regions.length; x++) {
+					var local_region = owid_obj[all_owid_regions[x]];
+					var local_population = returnSafeNumber(local_region.population[hyde_years[i]], 1);
+					var local_value = local_owid_obj[all_owid_regions[x]];
+					
+					local_owid_scalars[local_region.colour.join(",")] = returnSafeNumber(local_population/local_value, 1);
+				}
+				
+				log.info(` - Local OWID object:`, local_owid_obj);
+				log.info(` - Local scalars:`, local_owid_scalars); //Something happens to make scalars infinitesimal by 300AD
 				
 				saveNumberRasterImage({
 					file_path: local_output_file_path,
