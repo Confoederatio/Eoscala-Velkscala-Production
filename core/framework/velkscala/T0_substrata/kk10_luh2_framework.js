@@ -216,8 +216,22 @@
 		//Declare local instance variables
 		var common_defines = config.defines.common;
 		var hyde_years = config.velkscala.hyde.hyde_years;
-		var nelson_obj = getNelsonPopulationObject();
+		var nelson_obj = getNelsonPopulationObject().regions;
+			var all_nelson_regions = Object.keys(nelson_obj);
+			
+			for (let i = 0; i < all_nelson_regions.length; i++) {
+				var local_region = nelson_obj[all_nelson_regions[i]];
+				
+				nelson_obj[local_region.colour.join(",")] = local_region;
+			}
 		var owid_obj = getOWIDRegionsObject();
+			var all_owid_regions = Object.keys(owid_obj);
+			
+			for (let i = 0; i < all_owid_regions.length; i++) {
+				var local_region = owid_obj[all_owid_regions[i]];
+				
+				owid_obj[local_region.colour.join(", ")] = local_region;
+			}
 		
 		//Load in nelson_raster, owid_raster for reference
 		var nelson_raster = loadImage(common_defines.input_file_paths.nelson_subdivisions);
@@ -232,7 +246,6 @@
 			//Adjust raster image to Nelson
 			log.info(`- Standardising to Nelson for ${hyde_years[i]} ..`);
 			if (fs.existsSync(local_input_file_path)) {
-				var all_nelson_regions = Object.keys(nelson_obj);
 				var local_nelson_obj = {};
 				var local_nelson_scalars = {};
 				
@@ -246,19 +259,25 @@
 						
 						//Declare local instance variables
 						var byte_index = index*4;
-						var local_region = Object.values(nelson_obj).find((local_obj) => (local_obj.colour.join(",") == [
+						var local_region = nelson_obj[[
 							nelson_raster.data[byte_index],
 							nelson_raster.data[byte_index + 1],
 							nelson_raster.data[byte_index + 2]
-						].join(",")));
+						].join(",")];
 						
 						if (local_region) modifyValue(local_nelson_obj, local_region.key, number);
 					}
 				});
 				
 				//Iterate over all_nelson_regions; populate local_nelson_scalars
-				for (let x = 0; x < all_nelson_regions.length; x++)
-					local_nelson_scalars[all_nelson_regions[x]] = local_nelson_obj[all_nelson_regions[x]]/nelson_obj[all_nelson_regions[x]];
+				for (let x = 0; x < all_nelson_regions.length; x++) {
+					var local_region = nelson_obj[all_nelson_regions[x]];
+					
+					local_nelson_scalars[all_nelson_regions[x]] = local_nelson_obj[all_nelson_regions[x]]/nelson_obj[all_nelson_regions[x]].population[hyde_years[i]];
+				}
+				
+				log.info(` - Local Nelson object:`, local_nelson_obj);
+				log.info(` - Local scalars:`, local_nelson_scalars);
 				
 				saveNumberRasterImage({
 					file_path: local_output_file_path,
@@ -270,11 +289,11 @@
 						
 						//Declare local instance variables
 						var byte_index = index*4;
-						var local_region = Object.values(nelson_obj).find((local_obj) => (local_obj.colour.join(",") == [
+						var local_region = nelson_obj[[
 							nelson_raster.data[byte_index],
 							nelson_raster.data[byte_index + 1],
 							nelson_raster.data[byte_index + 2]
-						].join(",")));
+						]];
 						var local_value = local_input_raster.data[index];
 						
 						//Adjust to Nelson if possible
@@ -300,7 +319,6 @@
 			//Adjust raster image to OWID/HYDE
 			log.info(`- Standardising to OWID/HYDE for ${hyde_years[i]} ..`);
 			if (fs.existsSync(local_input_file_path)) {
-				var all_owid_regions = Object.keys(owid_obj);
 				var local_owid_obj = {};
 				var local_owid_scalars = {};
 				
@@ -314,11 +332,11 @@
 						
 						//Declare local instance variables
 						var byte_index = index*4;
-						var local_region = Object.values(owid_obj).find((local_obj) => (local_obj.colour.join(",") == [
+						var local_region = owid_obj[[
 							owid_raster.data[byte_index],
 							owid_raster.data[byte_index + 1],
 							owid_raster.data[byte_index + 2]
-						].join(",")));
+						].join(",")];
 						
 						if (local_region) modifyValue(local_owid_obj, local_region.key, number);
 					}
@@ -326,7 +344,8 @@
 				
 				//Iterate over all_owid_regions, populate local_owid_scalars
 				for (let x = 0; x < all_owid_regions.length; x++)
-					local_owid_scalars[all_owid_regions[x]] = local_owid_obj[all_owid_regions[x]]/owid_obj[all_owid_regions[x]];
+					local_owid_scalars[all_owid_regions[x]] = local_owid_obj[all_owid_regions[x]]
+						/owid_obj[all_owid_regions[x]]["Population (historical)"][hyde_years[i]];
 				
 				saveNumberRasterImage({
 					file_path: local_output_file_path,
@@ -338,11 +357,11 @@
 						
 						//Declare local instance variables
 						var byte_index = index*4;
-						var local_region = Object.values(owid_obj).find((local_obj) => (local_obj.colour.join(",") == [
+						var local_region = owid_obj[[
 							owid_raster.data[byte_index],
 							owid_raster.data[byte_index + 1],
 							owid_raster.data[byte_index + 2]
-						].join(",")));
+						].join(",")];
 						var local_value = local_input_raster.data[index];
 						
 						//Adjust to OWID if possible
