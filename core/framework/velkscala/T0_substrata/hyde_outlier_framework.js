@@ -7,7 +7,7 @@
 		
 		//Iterate over all hyde_years and check population
 		for (let i = 0; i < hyde_years.length; i++) {
-			var local_input_file_path = `${common_defines.input_file_paths.processed_substrata_folder}${common_defines.input_file_paths.processed_substrata_prefix}_${getHYDEYearName(hyde_years[i])}_number.png`;
+			var local_input_file_path = `${common_defines.input_file_paths.processed_substrata_folder}${common_defines.input_file_paths.processed_substrata_prefix}${getHYDEYearName(hyde_years[i])}_number.png`;
 			var local_population = getImageSum(local_input_file_path);
 			var local_world_population = world_pop_obj[hyde_years[i]];
 			
@@ -206,7 +206,7 @@
 		//Iterate over all hyde_years and scale the corresponding raster to the global mean
 		for (let i = 0; i < hyde_years.length; i++) {
 			var local_hyde_file_path = `${common_defines.input_file_paths.hyde_outliers_processed}pop_${getHYDEYearName(hyde_years[i])}_number.png`;
-			var local_output_path = `${common_defines.input_file_paths.processed_substrata_folder}${common_defines.input_file_paths.processed_substrata_prefix}_${getHYDEYearName(hyde_years[i])}_number.png`;
+			var local_output_path = `${common_defines.input_file_paths.processed_substrata_folder}${common_defines.input_file_paths.processed_substrata_prefix}${getHYDEYearName(hyde_years[i])}_number.png`;
 			var local_world_population = world_pop_obj[hyde_years[i]];
 			
 			if (fs.existsSync(local_hyde_file_path)) {
