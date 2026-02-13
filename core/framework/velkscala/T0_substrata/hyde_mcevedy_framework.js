@@ -308,11 +308,8 @@
     var hyde_years = config.velkscala.hyde.hyde_years;
 
     var all_hyde_years = [];
-    var hyde_domain = [getMinimumInArray(hyde_years), getMaximumInArray(hyde_years)];
 
     //Iterate over hyde_domain and fill in all_hyde_years
-    /*for (var i = hyde_domain[0]; i <= hyde_domain[1]; i++)
-      all_hyde_years.push(i);*/
     all_hyde_years = all_hyde_years.concat(hyde_years);
     all_hyde_years = sortArray(all_hyde_years, { mode: "ascending" });
 
